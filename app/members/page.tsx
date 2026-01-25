@@ -22,10 +22,10 @@ export default function MembersPage() {
     : members.filter(m => m.family === selectedFamily);
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8">
+    <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">
+          <h1 className="text-4xl font-black uppercase transform -rotate-1">
             Church Members
           </h1>
           <Button onClick={() => setShowAddModal(true)}>
@@ -76,18 +76,18 @@ export default function MembersPage() {
 
 function MemberCard({ member }: { member: Member }) {
   const familyColors = {
-    'Salvation Siblings': 'border-l-blue-500',
-    'Ebenezer': 'border-l-green-500',
-    'Jehova-nissi': 'border-l-purple-500',
+    'Salvation Siblings': 'bg-blue-300',
+    'Ebenezer': 'bg-green-300',
+    'Jehova-nissi': 'bg-purple-300',
   };
 
   return (
-    <Card className={`border-l-4 ${familyColors[member.family]}`}>
+    <Card className={`${familyColors[member.family]}`}>
       <CardHeader>
-        <CardTitle className="text-lg">{member.name}</CardTitle>
+        <CardTitle className="text-lg uppercase">{member.name}</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-1 text-sm text-zinc-600">
+        <div className="space-y-1 text-sm font-bold">
           <p>Email: {member.email}</p>
           <p>Level: {member.level}</p>
           <p>Status: {member.status}</p>

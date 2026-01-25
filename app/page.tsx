@@ -4,22 +4,22 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-50">
+    <div className="min-h-screen bg-[#fafafa]">
       {/* Hero Section */}
-      <section className="bg-white text-black py-20">
+      <section className="bg-gradient-to-br from-yellow-400 via-pink-400 to-blue-400 text-black py-20 border-b-8 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold mb-6">Welcome to RCA-SDA</h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
+          <h1 className="text-6xl font-black mb-6 uppercase tracking-tight transform -rotate-1">Welcome to RCA-SDA</h1>
+          <p className="text-xl mb-8 max-w-2xl mx-auto font-bold">
             Manage all church activities in one place. Track members, record Sabbath attendance, 
             share testimonies, and stay connected with our community.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Button asChild size="lg" className="rounded-full">
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Button asChild size="lg" variant="outline" className="bg-white">
               <Link href="/members">
                 View Members
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="rounded-full border-2 border-balck text-black hover:bg-white/10 hover:text-black">
+            <Button asChild size="lg" variant="secondary">
               <Link href="/testimonies">
                 Share Testimony
               </Link>
@@ -30,7 +30,7 @@ export default function Home() {
 
       {/* Features Section */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900">
+        <h2 className="text-4xl font-black text-center mb-12 uppercase transform -rotate-1">
           Church Management Features
         </h2>
         
@@ -87,36 +87,36 @@ export default function Home() {
       </section>
 
       {/* Church Families Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-white border-y-8 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900">
+          <h2 className="text-4xl font-black text-center mb-12 uppercase transform rotate-1">
             Our Church Families
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900">
+            <div className="bg-blue-300 border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-4 uppercase">
                 Salvation Siblings
               </h3>
-              <p className="text-zinc-600">
+              <p className="font-bold">
                 United in faith and fellowship
               </p>
             </div>
             
-            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900">
+            <div className="bg-green-300 border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-4 uppercase">
                 Ebenezer
               </h3>
-              <p className="text-zinc-600">
+              <p className="font-bold">
                 Thus far the Lord has helped us
               </p>
             </div>
             
-            <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900">
+            <div className="bg-purple-300 border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-4 uppercase">
                 Jehova-nissi
               </h3>
-              <p className="text-zinc-600">
+              <p className="font-bold">
                 The Lord is our banner
               </p>
             </div>

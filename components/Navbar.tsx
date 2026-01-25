@@ -7,36 +7,36 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="bg-white border-b border-zinc-200">
+    <nav className="bg-white border-b-8 border-black sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-20">
           <div className="flex items-center">
-            <Link href="/" className="text-xl font-bold text-zinc-900">
+            <Link href="/" className="text-2xl font-black uppercase tracking-tight transform hover:scale-105 transition-transform">
               RCA-SDA
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-8">
-            <Link href="/members" className="text-zinc-700 hover:text-zinc-900">
+          <div className="hidden md:flex items-center space-x-6">
+            <Link href="/members" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Members
             </Link>
-            <Link href="/sabbath-report" className="text-zinc-700 hover:text-zinc-900">
+            <Link href="/sabbath-report" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Sabbath Report
             </Link>
-            <Link href="/committee" className="text-zinc-700 hover:text-zinc-900">
+            <Link href="/committee" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Committee
             </Link>
-            <Link href="/choir" className="text-zinc-700 hover:text-zinc-900">
+            <Link href="/choir" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Choir
             </Link>
-            <Link href="/blog" className="text-zinc-700 hover:text-zinc-900">
+            <Link href="/blog" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Blog
             </Link>
-            <Link href="/gallery" className="text-zinc-700 hover:text-zinc-900">
+            <Link href="/gallery" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Gallery
             </Link>
-            <Link href="/testimonies" className="text-zinc-700 hover:text-zinc-900">
+            <Link href="/testimonies" className="font-black uppercase text-sm hover:text-yellow-500 transition-colors">
               Testimonies
             </Link>
           </div>
@@ -45,7 +45,7 @@ export default function Navbar() {
           <div className="md:hidden flex items-center">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-zinc-700"
+              className="font-black text-2xl"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isOpen ? (
@@ -61,27 +61,27 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden">
+        <div className="md:hidden border-t-4 border-black bg-yellow-300">
           <div className="px-2 pt-2 pb-3 space-y-1">
-            <Link href="/members" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/members" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Members
             </Link>
-            <Link href="/sabbath-report" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/sabbath-report" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Sabbath Report
             </Link>
-            <Link href="/committee" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/committee" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Committee
             </Link>
-            <Link href="/choir" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/choir" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Choir
             </Link>
-            <Link href="/blog" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/blog" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Blog
             </Link>
-            <Link href="/gallery" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/gallery" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Gallery
             </Link>
-            <Link href="/testimonies" className="block px-3 py-2 text-zinc-700 hover:bg-zinc-100 rounded">
+            <Link href="/testimonies" className="block px-3 py-2 font-black uppercase text-sm hover:bg-black hover:text-yellow-300 transition-colors">
               Testimonies
             </Link>
           </div>

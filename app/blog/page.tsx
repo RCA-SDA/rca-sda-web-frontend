@@ -30,10 +30,10 @@ export default function BlogPage() {
   const categories: BlogCategory[] = ['Church News', 'Word of God', 'Events'];
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8">
+    <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">
+          <h1 className="text-4xl font-black uppercase transform -rotate-1">
             Church Blog
           </h1>
           {currentUser.role === 'Leader' && (
