@@ -5,9 +5,12 @@ import { Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-[#fafafa] relative">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+      
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-yellow-400 via-pink-400 to-blue-400 text-black py-20 border-b-4 border-black">
+      <section className=" text-black py-20 border-b-4 border-black relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-6xl font-black mb-6 uppercase tracking-tight transform -rotate-1">Welcome to RCA-SDA</h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto font-bold">
@@ -30,7 +33,7 @@ export default function Home() {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
         <h2 className="text-4xl font-black text-center mb-12 uppercase transform -rotate-1">
           Church Management Features
         </h2>
@@ -88,7 +91,7 @@ export default function Home() {
       </section>
 
       {/* Church Families Section */}
-      <section className="py-16 bg-white border-y-4 border-black">
+      <section className="py-16 border-y-4 border-black relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-center mb-12 uppercase transform rotate-1">
             Our Church Families
