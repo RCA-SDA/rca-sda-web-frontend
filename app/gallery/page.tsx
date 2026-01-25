@@ -188,82 +188,79 @@ function AddMediaModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full p-6">
-        <h2 className="text-2xl font-bold mb-4 text-zinc-900">
-          Upload Media
-        </h2>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Upload Media</DialogTitle>
+        </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Title
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
               type="text"
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
+              placeholder="Enter media title"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Description (optional)
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="description">Description (optional)</Label>
+            <Textarea
+              id="description"
               rows={3}
               value={formData.description}
               onChange={e => setFormData({ ...formData, description: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
+              placeholder="Add a description..."
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Media Type
-            </label>
-            <select
+          <div className="space-y-2">
+            <Label htmlFor="mediaType">Media Type</Label>
+            <Select
               value={formData.mediaType}
-              onChange={e => setFormData({ ...formData, mediaType: e.target.value as MediaType })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
+              onValueChange={(value) => setFormData({ ...formData, mediaType: value as MediaType })}
             >
-              <option value="image">Photo</option>
-              <option value="video">Video</option>
-            </select>
+              <SelectTrigger id="mediaType">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="image">Photo</SelectItem>
+                <SelectItem value="video">Video</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              File
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="file">File</Label>
+            <Input
+              id="file"
               type="file"
               required
               accept={formData.mediaType === 'image' ? 'image/*' : 'video/*'}
               onChange={e => setFormData({ ...formData, file: e.target.files?.[0] || null })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
+              className="cursor-pointer"
             />
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-zinc-300 rounded-lg hover:bg-zinc-100 text-zinc-700"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
+            </Button>
+            <Button type="submit" className="flex-1">
               Upload
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
