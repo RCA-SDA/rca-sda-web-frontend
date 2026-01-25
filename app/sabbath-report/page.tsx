@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Calendar as CalendarIcon, Save } from 'lucide-react';
 import { format } from 'date-fns';
 
@@ -40,33 +41,23 @@ export default function SabbathReportPage() {
               <CalendarIcon className="w-5 h-5" />
               Select Date
             </Label>
-            <div className="flex gap-4 items-start flex-wrap">
+            <div className="flex gap-4 items-center flex-wrap">
               <Input
                 id="date"
-                type="date"
-                value={format(selectedDate, 'yyyy-MM-dd')}
-                onChange={e => setSelectedDate(new Date(e.target.value))}
-                className="max-w-xs"
+                type="text"
+                value={format(selectedDate, 'MMMM dd, yyyy')}
+                readOnly
+                className="max-w-xs cursor-pointer"
+                onClick={() => setShowCalendar(true)}
               />
               <Button 
-                variant="outline"
-                onClick={() => setShowCalendar(!showCalendar)}
+                variant="default"
+                onClick={() => setShowCalendar(true)}
               >
                 <CalendarIcon className="w-4 h-4 mr-2" />
-                {showCalendar ? 'Hide Calendar' : 'Show Calendar'}
+                Choose Date
               </Button>
             </div>
-            
-            {showCalendar && (
-              <div className="mt-6 flex justify-center">
-                <Calendar
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={(date) => date && setSelectedDate(date)}
-                  className="w-fit"
-                />
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -108,6 +99,23 @@ export default function SabbathReportPage() {
             )}
           </CardContent>
         </Card>
+
+        {/* Calendar Modal */}
+        <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
+          <DialogContent className="max-w-fit bg-transparent border-0 shadow-none p-0">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => {
+                if (date) {
+                  setSelectedDate(date);
+                  setShowCalendar(false);
+                }
+              }}
+              className="w-fit"
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );

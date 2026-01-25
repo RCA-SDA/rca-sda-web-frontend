@@ -114,99 +114,108 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>Add Meeting Notes</DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Meeting Title</Label>
-            <Input
-              id="title"
-              type="text"
-              required
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g., Monthly Committee Meeting"
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="date" className="flex items-center gap-2">
-              <CalendarIcon className="w-4 h-4" />
-              Date
-            </Label>
-            <div className="flex gap-2 items-start flex-wrap">
+    <>
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Add Meeting Notes</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Meeting Title</Label>
               <Input
-                id="date"
-                type="date"
+                id="title"
+                type="text"
                 required
-                value={format(formData.date, 'yyyy-MM-dd')}
-                onChange={e => setFormData({ ...formData, date: new Date(e.target.value) })}
-                className="max-w-xs"
+                value={formData.title}
+                onChange={e => setFormData({ ...formData, title: e.target.value })}
+                placeholder="e.g., Monthly Committee Meeting"
               />
-              <Button 
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="date" className="flex items-center gap-2">
+                <CalendarIcon className="w-4 h-4" />
+                Date
+              </Label>
+              <div className="flex gap-2 items-center flex-wrap">
+                <Input
+                  id="date"
+                  type="text"
+                  required
+                  value={format(formData.date, 'MMMM dd, yyyy')}
+                  readOnly
+                  className="max-w-xs cursor-pointer"
+                  onClick={() => setShowCalendar(true)}
+                />
+                <Button 
+                  type="button"
+                  variant="outline"
+                  onClick={() => setShowCalendar(true)}
+                >
+                  <CalendarIcon className="w-4 h-4 mr-2" />
+                  Choose Date
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="notes">Meeting Notes</Label>
+              <Textarea
+                id="notes"
+                required
+                rows={10}
+                value={formData.notes}
+                onChange={e => setFormData({ ...formData, notes: e.target.value })}
+                placeholder="Enter detailed meeting notes..."
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="attendees">Attendees (comma-separated)</Label>
+              <Input
+                id="attendees"
+                type="text"
+                value={formData.attendees}
+                onChange={e => setFormData({ ...formData, attendees: e.target.value })}
+                placeholder="John Doe, Jane Smith, ..."
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
                 type="button"
                 variant="outline"
-                onClick={() => setShowCalendar(!showCalendar)}
+                onClick={onClose}
+                className="flex-1"
               >
-                <CalendarIcon className="w-4 h-4 mr-2" />
-                {showCalendar ? 'Hide' : 'Show'} Calendar
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1">
+                Save Notes
               </Button>
             </div>
-            
-            {showCalendar && (
-              <div className="flex justify-center mt-4">
-                <Calendar
-                  mode="single"
-                  selected={formData.date}
-                  onSelect={(date) => date && setFormData({ ...formData, date })}
-                  className="w-fit"
-                />
-              </div>
-            )}
-          </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
-          <div className="space-y-2">
-            <Label htmlFor="notes">Meeting Notes</Label>
-            <Textarea
-              id="notes"
-              required
-              rows={10}
-              value={formData.notes}
-              onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              placeholder="Enter detailed meeting notes..."
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="attendees">Attendees (comma-separated)</Label>
-            <Input
-              id="attendees"
-              type="text"
-              value={formData.attendees}
-              onChange={e => setFormData({ ...formData, attendees: e.target.value })}
-              placeholder="John Doe, Jane Smith, ..."
-            />
-          </div>
-
-          <div className="flex gap-3 pt-4">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-            <Button type="submit" className="flex-1">
-              Save Notes
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+      {/* Calendar Modal */}
+      <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
+        <DialogContent className="max-w-fit bg-transparent border-0 shadow-none p-0">
+          <Calendar
+            mode="single"
+            selected={formData.date}
+            onSelect={(date) => {
+              if (date) {
+                setFormData({ ...formData, date });
+                setShowCalendar(false);
+              }
+            }}
+            className="w-fit"
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
