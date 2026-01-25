@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { FileText, Calendar, Users } from 'lucide-react';
 
 export default function CommitteePage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -23,6 +24,7 @@ export default function CommitteePage() {
             Committee Meetings
           </h1>
           <Button onClick={() => setShowAddModal(true)}>
+            <FileText className="w-5 h-5 mr-2" />
             Add Meeting Notes
           </Button>
         </div>
@@ -56,8 +58,12 @@ function MeetingCard({ meeting }: { meeting: CommitteeMeeting }) {
     <Card className="bg-gradient-to-br from-orange-200 to-red-200">
       <CardHeader>
         <div className="flex justify-between items-start">
-          <CardTitle className="uppercase">{meeting.title}</CardTitle>
-          <span className="text-sm font-black">
+          <CardTitle className="uppercase flex items-center gap-2">
+            <FileText className="w-5 h-5" />
+            {meeting.title}
+          </CardTitle>
+          <span className="text-sm font-black flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
             {new Date(meeting.date).toLocaleDateString()}
           </span>
         </div>
@@ -69,7 +75,8 @@ function MeetingCard({ meeting }: { meeting: CommitteeMeeting }) {
 
         {meeting.attendees.length > 0 && (
           <div className="border-t-4 border-black pt-4">
-            <p className="text-sm font-black">
+            <p className="text-sm font-black flex items-center gap-2">
+              <Users className="w-4 h-4" />
               Attendees: {meeting.attendees.join(', ')}
             </p>
           </div>

@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Music, Music2 } from 'lucide-react';
 
 export default function ChoirPage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -30,6 +31,7 @@ export default function ChoirPage() {
           </h1>
           {currentUser.role === 'Choir Secretary' && (
             <Button onClick={() => setShowAddModal(true)}>
+              <Music className="w-5 h-5 mr-2" />
               Add Song
             </Button>
           )}
@@ -82,7 +84,7 @@ function SongCard({ song, onClick }: { song: Song; onClick: () => void }) {
         <div className="flex items-start justify-between">
           <CardTitle className="text-lg uppercase">{song.title}</CardTitle>
           {song.audioUrl && (
-            <span className="text-2xl">🎵</span>
+            <Music2 className="w-6 h-6" />
           )}
         </div>
       </CardHeader>

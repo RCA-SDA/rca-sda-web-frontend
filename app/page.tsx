@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -39,49 +40,49 @@ export default function Home() {
             title="Member Management"
             description="View and manage all church members organized by families: Salvation Siblings, Ebenezer, and Jehova-nissi."
             href="/members"
-            icon="👥"
+            icon={<Users className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Sabbath School Report"
             description="Family fathers and mothers can mark attendance and track spiritual activities for their family members."
             href="/sabbath-report"
-            icon="📋"
+            icon={<Calendar className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Committee Notes"
             description="Document and access RCA-SDA committee meeting notes and decisions."
             href="/committee"
-            icon="📝"
+            icon={<FileText className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Choir Songs"
             description="Browse song lyrics and listen to choir recordings. Choir secretaries can upload new songs."
             href="/choir"
-            icon="🎵"
+            icon={<Music className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Church Blog"
             description="Read about church events, Word of God teachings, and stay updated with church activities."
             href="/blog"
-            icon="✍️"
+            icon={<BookOpen className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Gallery"
             description="View photos and videos from church events and activities."
             href="/gallery"
-            icon="📸"
+            icon={<Image className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Testimonies"
             description="Share your testimony and read how God is working in the lives of our members."
             href="/testimonies"
-            icon="🙏"
+            icon={<Heart className="w-12 h-12" />}
           />
         </div>
       </section>
@@ -131,7 +132,7 @@ interface FeatureCardProps {
   title: string;
   description: string;
   href: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 function FeatureCard({ title, description, href, icon }: FeatureCardProps) {
@@ -139,7 +140,7 @@ function FeatureCard({ title, description, href, icon }: FeatureCardProps) {
     <Link href={href}>
       <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
         <CardHeader>
-          <div className="text-4xl mb-2">{icon}</div>
+          <div className="mb-2 text-black">{icon}</div>
           <CardTitle>{title}</CardTitle>
         </CardHeader>
         <CardContent>

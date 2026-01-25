@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Calendar, Save } from 'lucide-react';
 
 export default function SabbathReportPage() {
   const [selectedFamily, setSelectedFamily] = useState<Family>('Salvation Siblings');
@@ -201,6 +202,7 @@ function AttendanceForm({
         </div>
 
         <Button onClick={handleSubmit} className="mt-4">
+          <Save className="w-4 h-4 mr-2" />
           Save Attendance
         </Button>
       </CardContent>

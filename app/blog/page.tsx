@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PenSquare, ArrowRight } from 'lucide-react';
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory | 'All'>('All');
@@ -38,6 +39,7 @@ export default function BlogPage() {
           </h1>
           {currentUser.role === 'Leader' && (
             <Button onClick={() => setShowAddModal(true)}>
+              <PenSquare className="w-5 h-5 mr-2" />
               Write Post
             </Button>
           )}
@@ -122,7 +124,7 @@ function BlogCard({ blog }: { blog: Blog }) {
           {blog.content.length > 300 && '...'}
         </p>
         <Button variant="link" className="p-0">
-          Read more →
+          Read more <ArrowRight className="w-4 h-4 ml-1" />
         </Button>
       </CardContent>
     </Card>

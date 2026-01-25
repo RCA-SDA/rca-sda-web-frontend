@@ -8,6 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Heart, CheckCircle } from 'lucide-react';
 
 export default function TestimoniesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -29,6 +30,7 @@ export default function TestimoniesPage() {
             Share how God is working in your life and be encouraged by the testimonies of others.
           </p>
           <Button onClick={() => setShowAddModal(true)} size="lg">
+            <Heart className="w-5 h-5 mr-2" />
             Share Your Testimony
           </Button>
         </div>
@@ -63,7 +65,7 @@ function TestimonyCard({ testimony }: { testimony: Testimony }) {
       <CardHeader>
         <div className="flex items-start gap-4">
           <div className="w-12 h-12 bg-blue-400 border-4 border-black flex items-center justify-center flex-shrink-0">
-            <span className="text-2xl">🙏</span>
+            <Heart className="w-6 h-6 text-white" />
           </div>
           <div className="flex-1">
             <CardTitle className="uppercase mb-2">{testimony.title}</CardTitle>
@@ -110,7 +112,7 @@ function AddTestimonyModal({ onClose }: { onClose: () => void }) {
     return (
       <Dialog open={true} onOpenChange={onClose}>
         <DialogContent className="max-w-md text-center bg-green-300">
-          <div className="text-6xl mb-4">✅</div>
+          <CheckCircle className="w-16 h-16 mx-auto mb-4" />
           <DialogTitle>Thank You!</DialogTitle>
           <p className="font-bold mb-6">
             Your testimony has been submitted and is pending approval. 

@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { UserPlus, Mail, GraduationCap, Users as UsersIcon } from 'lucide-react';
 
 export default function MembersPage() {
   const [selectedFamily, setSelectedFamily] = useState<Family | 'All'>('All');
@@ -29,6 +30,7 @@ export default function MembersPage() {
             Church Members
           </h1>
           <Button onClick={() => setShowAddModal(true)}>
+            <UserPlus className="w-5 h-5 mr-2" />
             Add Member
           </Button>
         </div>
@@ -84,12 +86,21 @@ function MemberCard({ member }: { member: Member }) {
   return (
     <Card className={`${familyColors[member.family]}`}>
       <CardHeader>
-        <CardTitle className="text-lg uppercase">{member.name}</CardTitle>
+        <CardTitle className="text-lg uppercase flex items-center gap-2">
+          <UsersIcon className="w-5 h-5" />
+          {member.name}
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="space-y-1 text-sm font-bold">
-          <p>Email: {member.email}</p>
-          <p>Level: {member.level}</p>
+          <p className="flex items-center gap-2">
+            <Mail className="w-4 h-4" />
+            {member.email}
+          </p>
+          <p className="flex items-center gap-2">
+            <GraduationCap className="w-4 h-4" />
+            Level: {member.level}
+          </p>
           <p>Status: {member.status}</p>
           <p>Family: {member.family}</p>
           <p>Role: {member.role}</p>

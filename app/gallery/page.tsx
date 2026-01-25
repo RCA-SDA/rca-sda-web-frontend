@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Upload, Image as ImageIcon, Video, Play } from 'lucide-react';
 
 export default function GalleryPage() {
   const [filter, setFilter] = useState<MediaType | 'All'>('All');
@@ -30,6 +31,7 @@ export default function GalleryPage() {
             Church Gallery
           </h1>
           <Button onClick={() => setShowAddModal(true)}>
+            <Upload className="w-5 h-5 mr-2" />
             Upload Media
           </Button>
         </div>
@@ -40,18 +42,21 @@ export default function GalleryPage() {
             variant={filter === 'All' ? 'default' : 'outline'}
             onClick={() => setFilter('All')}
           >
+            <ImageIcon className="w-4 h-4 mr-2" />
             All
           </Button>
           <Button
             variant={filter === 'image' ? 'default' : 'outline'}
             onClick={() => setFilter('image')}
           >
+            <ImageIcon className="w-4 h-4 mr-2" />
             Photos
           </Button>
           <Button
             variant={filter === 'video' ? 'default' : 'outline'}
             onClick={() => setFilter('video')}
           >
+            <Video className="w-4 h-4 mr-2" />
             Videos
           </Button>
         </div>
@@ -108,7 +113,7 @@ function GalleryCard({ item, onClick }: { item: GalleryItem; onClick: () => void
         />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-zinc-300">
-          <span className="text-6xl">▶️</span>
+          <Play className="w-16 h-16" />
         </div>
       )}
       
