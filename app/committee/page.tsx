@@ -8,7 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { FileText, Calendar, Users } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { FileText, Calendar as CalendarIcon, Users } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function CommitteePage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -89,17 +91,18 @@ function MeetingCard({ meeting }: { meeting: CommitteeMeeting }) {
 function AddMeetingModal({ onClose }: { onClose: () => void }) {
   const [formData, setFormData] = useState({
     title: '',
-    date: new Date().toISOString().split('T')[0],
+    date: new Date(),
     notes: '',
     attendees: '',
   });
+  const [showCalendar, setShowCalendar] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     const meeting: Partial<CommitteeMeeting> = {
       title: formData.title,
-      date: new Date(formData.date),
+      date: formData.date,
       notes: formData.notes,
       attendees: formData.attendees.split(',').map(a => a.trim()).filter(Boolean),
       createdAt: new Date(),
@@ -131,14 +134,39 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="date">Date</Label>
-            <Input
-              id="date"
-              type="date"
-              required
-              value={formData.date}
-              onChange={e => setFormData({ ...formData, date: e.target.value })}
-            />
+            <Label htmlFor="date" className="flex items-center gap-2">
+              <CalendarIcon className="w-4 h-4" />
+              Date
+            </Label>
+            <div className="flex gap-2 items-start flex-wrap">
+              <Input
+                id="date"
+                type="date"
+                required
+                value={format(formData.date, 'yyyy-MM-dd')}
+                onChange={e => setFormData({ ...formData, date: new Date(e.target.value) })}
+                className="max-w-xs"
+              />
+              <Button 
+                type="button"
+                variant="outline"
+                onClick={() => setShowCalendar(!showCalendar)}
+              >
+                <CalendarIcon className="w-4 h-4 mr-2" />
+                {showCalendar ? 'Hide' : 'Show'} Calendar
+              </Button>
+            </div>
+            
+            {showCalendar && (
+              <div className="flex justify-center mt-4">
+                <Calendar
+                  mode="single"
+                  selected={formData.date}
+                  onSelect={(date) => date && setFormData({ ...formData, date })}
+                  className="w-fit"
+                />
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">

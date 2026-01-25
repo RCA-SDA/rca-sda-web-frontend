@@ -7,11 +7,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Calendar, Save } from 'lucide-react';
+import { Calendar } from '@/components/ui/calendar';
+import { Calendar as CalendarIcon, Save } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function SabbathReportPage() {
   const [selectedFamily, setSelectedFamily] = useState<Family>('Salvation Siblings');
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showCalendar, setShowCalendar] = useState(false);
 
   // Mock current user - replace with actual auth
   const currentUser = {
@@ -33,14 +36,37 @@ export default function SabbathReportPage() {
         {/* Date Selection */}
         <Card className="mb-6 bg-yellow-200">
           <CardContent className="pt-6">
-            <Label htmlFor="date">Select Date</Label>
-            <Input
-              id="date"
-              type="date"
-              value={selectedDate}
-              onChange={e => setSelectedDate(e.target.value)}
-              className="mt-2"
-            />
+            <Label htmlFor="date" className="flex items-center gap-2 mb-2">
+              <CalendarIcon className="w-5 h-5" />
+              Select Date
+            </Label>
+            <div className="flex gap-4 items-start flex-wrap">
+              <Input
+                id="date"
+                type="date"
+                value={format(selectedDate, 'yyyy-MM-dd')}
+                onChange={e => setSelectedDate(new Date(e.target.value))}
+                className="max-w-xs"
+              />
+              <Button 
+                variant="outline"
+                onClick={() => setShowCalendar(!showCalendar)}
+              >
+                <CalendarIcon className="w-4 h-4 mr-2" />
+                {showCalendar ? 'Hide Calendar' : 'Show Calendar'}
+              </Button>
+            </div>
+            
+            {showCalendar && (
+              <div className="mt-6 flex justify-center">
+                <Calendar
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={(date) => date && setSelectedDate(date)}
+                  className="w-fit"
+                />
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -74,7 +100,7 @@ export default function SabbathReportPage() {
                   <AttendanceForm
                     key={member.id}
                     member={member}
-                    date={selectedDate}
+                    date={format(selectedDate, 'yyyy-MM-dd')}
                     recordedBy={currentUser.id}
                   />
                 ))}
