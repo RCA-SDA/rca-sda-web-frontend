@@ -202,7 +202,10 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
 
       {/* Calendar Modal */}
       <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
-        <DialogContent className="max-w-fit bg-transparent border-0 shadow-none p-0">
+        <DialogContent className="max-w-fit p-6">
+          <DialogHeader>
+            <DialogTitle>Select Date</DialogTitle>
+          </DialogHeader>
           <Calendar
             mode="single"
             selected={formData.date}
@@ -212,7 +215,7 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
                 setShowCalendar(false);
               }
             }}
-            className="w-fit"
+            className="w-fit mx-auto"
           />
         </DialogContent>
       </Dialog>

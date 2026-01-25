@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Family, Member, SabbathAttendance } from '@/types';
-import { FAMILIES, DAYS_OF_WEEK } from '@/lib/constants';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -13,7 +12,6 @@ import { Calendar as CalendarIcon, Save } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function SabbathReportPage() {
-  const [selectedFamily, setSelectedFamily] = useState<Family>('Salvation Siblings');
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
 
@@ -102,7 +100,10 @@ export default function SabbathReportPage() {
 
         {/* Calendar Modal */}
         <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
-          <DialogContent className="max-w-fit bg-transparent border-0 shadow-none p-0">
+          <DialogContent className="max-w-fit p-6">
+            <DialogHeader>
+              <DialogTitle>Select Date</DialogTitle>
+            </DialogHeader>
             <Calendar
               mode="single"
               selected={selectedDate}
@@ -112,7 +113,7 @@ export default function SabbathReportPage() {
                   setShowCalendar(false);
                 }
               }}
-              className="w-fit"
+              className="w-fit mx-auto"
             />
           </DialogContent>
         </Dialog>

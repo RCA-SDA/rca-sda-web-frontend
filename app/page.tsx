@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-[#fafafa]">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-yellow-400 via-pink-400 to-blue-400 text-black py-20 border-b-8 border-black">
+      <section className="bg-gradient-to-br from-yellow-400 via-pink-400 to-blue-400 text-black py-20 border-b-4 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-6xl font-black mb-6 uppercase tracking-tight transform -rotate-1">Welcome to RCA-SDA</h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto font-bold">
@@ -88,7 +88,7 @@ export default function Home() {
       </section>
 
       {/* Church Families Section */}
-      <section className="py-16 bg-white border-y-8 border-black">
+      <section className="py-16 bg-white border-y-4 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-center mb-12 uppercase transform rotate-1">
             Our Church Families
