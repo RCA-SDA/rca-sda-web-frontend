@@ -19,45 +19,45 @@ export default function SabbathReportPage() {
   const familyMembers: Member[] = [];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-8">
+    <div className="min-h-screen bg-zinc-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-8">
+        <h1 className="text-3xl font-bold text-zinc-900 mb-8">
           Sabbath School Report
         </h1>
 
         {/* Date Selection */}
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 mb-6">
-          <label className="block text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">
+        <div className="bg-white rounded-lg p-6 mb-6">
+          <label className="block text-sm font-medium mb-2 text-zinc-700">
             Select Date
           </label>
           <input
             type="date"
             value={selectedDate}
             onChange={e => setSelectedDate(e.target.value)}
-            className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+            className="px-4 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
           />
         </div>
 
         {/* Family Selection (only for authorized users) */}
         {(currentUser.role === 'Father' || currentUser.role === 'Mother') && (
-          <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-white">
+          <div className="bg-white rounded-lg p-6 mb-6">
+            <h2 className="text-xl font-semibold mb-4 text-zinc-900">
               Your Family: {currentUser.family}
             </h2>
-            <p className="text-zinc-600 dark:text-zinc-400">
+            <p className="text-zinc-600">
               You can mark attendance for members of your family.
             </p>
           </div>
         )}
 
         {/* Attendance Form */}
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-6 text-zinc-900 dark:text-white">
+        <div className="bg-white rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-6 text-zinc-900">
             Mark Attendance - {currentUser.family}
           </h2>
 
           {familyMembers.length === 0 ? (
-            <p className="text-zinc-500 dark:text-zinc-400 text-center py-8">
+            <p className="text-zinc-500 text-center py-8">
               No members found in your family. Please add members first.
             </p>
           ) : (
@@ -112,8 +112,8 @@ function AttendanceForm({
   };
 
   return (
-    <div className="border border-zinc-200 dark:border-zinc-800 rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4 text-zinc-900 dark:text-white">
+    <div className="border border-zinc-200 rounded-lg p-6">
+      <h3 className="text-lg font-semibold mb-4 text-zinc-900">
         {member.name}
       </h3>
 
@@ -125,7 +125,7 @@ function AttendanceForm({
             onChange={e => setFormData({ ...formData, attendedSabbath: e.target.checked })}
             className="w-4 h-4 rounded"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Attended Sabbath</span>
+          <span className="text-zinc-700">Attended Sabbath</span>
         </label>
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -135,7 +135,7 @@ function AttendanceForm({
             onChange={e => setFormData({ ...formData, attendedStartingSabbath: e.target.checked })}
             className="w-4 h-4 rounded"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Attended Starting Sabbath</span>
+          <span className="text-zinc-700">Attended Starting Sabbath</span>
         </label>
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -145,7 +145,7 @@ function AttendanceForm({
             onChange={e => setFormData({ ...formData, visitedPeople: e.target.checked })}
             className="w-4 h-4 rounded"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Visited People</span>
+          <span className="text-zinc-700">Visited People</span>
         </label>
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -155,7 +155,7 @@ function AttendanceForm({
             onChange={e => setFormData({ ...formData, wasVisited: e.target.checked })}
             className="w-4 h-4 rounded"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Was Visited</span>
+          <span className="text-zinc-700">Was Visited</span>
         </label>
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -165,7 +165,7 @@ function AttendanceForm({
             onChange={e => setFormData({ ...formData, helpedPeople: e.target.checked })}
             className="w-4 h-4 rounded"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Helped People</span>
+          <span className="text-zinc-700">Helped People</span>
         </label>
 
         <label className="flex items-center gap-2 cursor-pointer">
@@ -175,12 +175,12 @@ function AttendanceForm({
             onChange={e => setFormData({ ...formData, wasHelped: e.target.checked })}
             className="w-4 h-4 rounded"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Was Helped</span>
+          <span className="text-zinc-700">Was Helped</span>
         </label>
       </div>
 
       <div className="mt-4">
-        <label className="block text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">
+        <label className="block text-sm font-medium mb-2 text-zinc-700">
           Days Studied Bible (0-7)
         </label>
         <input
@@ -189,7 +189,7 @@ function AttendanceForm({
           max="7"
           value={formData.studiedBible}
           onChange={e => setFormData({ ...formData, studiedBible: parseInt(e.target.value) || 0 })}
-          className="w-32 px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+          className="w-32 px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
         />
       </div>
 

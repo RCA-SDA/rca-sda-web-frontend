@@ -2,6 +2,14 @@
 
 import { useState } from 'react';
 import { Blog, BlogCategory } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory | 'All'>('All');
@@ -22,57 +30,48 @@ export default function BlogPage() {
   const categories: BlogCategory[] = ['Church News', 'Word of God', 'Events'];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-8">
+    <div className="min-h-screen bg-zinc-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-zinc-900">
             Church Blog
           </h1>
           {currentUser.role === 'Leader' && (
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
+            <Button onClick={() => setShowAddModal(true)}>
               Write Post
-            </button>
+            </Button>
           )}
         </div>
 
         {/* Category Filter */}
         <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
-          <button
+          <Button
+            variant={selectedCategory === 'All' ? 'default' : 'outline'}
             onClick={() => setSelectedCategory('All')}
-            className={`px-4 py-2 rounded-lg whitespace-nowrap ${
-              selectedCategory === 'All'
-                ? 'bg-blue-600 text-white'
-                : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800'
-            }`}
           >
             All Posts
-          </button>
+          </Button>
           {categories.map(category => (
-            <button
+            <Button
               key={category}
+              variant={selectedCategory === category ? 'default' : 'outline'}
               onClick={() => setSelectedCategory(category)}
-              className={`px-4 py-2 rounded-lg whitespace-nowrap ${
-                selectedCategory === category
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800'
-              }`}
             >
               {category}
-            </button>
+            </Button>
           ))}
         </div>
 
         {/* Blog Posts */}
         <div className="space-y-6">
           {filteredBlogs.length === 0 ? (
-            <div className="bg-white dark:bg-zinc-900 rounded-lg p-12 text-center">
-              <p className="text-zinc-500 dark:text-zinc-400">
-                No blog posts yet. {currentUser.role === 'Leader' && 'Write your first post to get started.'}
-              </p>
-            </div>
+            <Card>
+              <CardContent className="p-12 text-center">
+                <p className="text-zinc-500">
+                  No blog posts yet. {currentUser.role === 'Leader' && 'Write your first post to get started.'}
+                </p>
+              </CardContent>
+            </Card>
           ) : (
             filteredBlogs.map(blog => (
               <BlogCard key={blog.id} blog={blog} />
@@ -89,47 +88,44 @@ export default function BlogPage() {
 }
 
 function BlogCard({ blog }: { blog: Blog }) {
-  const categoryColors = {
-    'Church News': 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-    'Word of God': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-    'Events': 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  };
+  const categoryVariants = {
+    'Church News': 'default',
+    'Word of God': 'secondary',
+    'Events': 'outline',
+  } as const;
 
   return (
-    <article className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
-      <div className="flex items-start justify-between mb-4">
-        <div>
-          <span className={`inline-block px-3 py-1 rounded-full text-xs font-medium mb-2 ${categoryColors[blog.category]}`}>
-            {blog.category}
-          </span>
-          <h2 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">
-            {blog.title}
-          </h2>
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            By {blog.author} • {new Date(blog.createdAt).toLocaleDateString()}
-          </p>
+    <Card>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="space-y-2">
+            <Badge variant={categoryVariants[blog.category]}>
+              {blog.category}
+            </Badge>
+            <CardTitle className="text-2xl">{blog.title}</CardTitle>
+            <CardDescription>
+              By {blog.author} • {new Date(blog.createdAt).toLocaleDateString()}
+            </CardDescription>
+          </div>
         </div>
-      </div>
-
-      {blog.imageUrl && (
-        <img 
-          src={blog.imageUrl} 
-          alt={blog.title}
-          className="w-full h-64 object-cover rounded-lg mb-4"
-        />
-      )}
-
-      <div className="prose dark:prose-invert max-w-none">
-        <p className="text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap">
+      </CardHeader>
+      <CardContent>
+        {blog.imageUrl && (
+          <img 
+            src={blog.imageUrl} 
+            alt={blog.title}
+            className="w-full h-64 object-cover rounded-lg mb-4"
+          />
+        )}
+        <p className="text-zinc-700 whitespace-pre-wrap mb-4">
           {blog.content.substring(0, 300)}
           {blog.content.length > 300 && '...'}
         </p>
-      </div>
-
-      <button className="mt-4 text-blue-600 dark:text-blue-400 hover:underline">
-        Read more →
-      </button>
-    </article>
+        <Button variant="link" className="p-0">
+          Read more →
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -156,85 +152,79 @@ function AddBlogModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-zinc-900 rounded-lg max-w-3xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4 text-zinc-900 dark:text-white">
-          Write Blog Post
-        </h2>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Write Blog Post</DialogTitle>
+        </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
-              Title
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
               type="text"
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
-              Category
-            </label>
-            <select
+          <div className="space-y-2">
+            <Label htmlFor="category">Category</Label>
+            <Select
               value={formData.category}
-              onChange={e => setFormData({ ...formData, category: e.target.value as BlogCategory })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+              onValueChange={(value) => setFormData({ ...formData, category: value as BlogCategory })}
             >
-              <option value="Church News">Church News</option>
-              <option value="Word of God">Word of God</option>
-              <option value="Events">Events</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="Church News">Church News</SelectItem>
+                <SelectItem value="Word of God">Word of God</SelectItem>
+                <SelectItem value="Events">Events</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
-              Image URL (optional)
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="imageUrl">Image URL (optional)</Label>
+            <Input
+              id="imageUrl"
               type="url"
               value={formData.imageUrl}
               onChange={e => setFormData({ ...formData, imageUrl: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
               placeholder="https://example.com/image.jpg"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
-              Content
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="content">Content</Label>
+            <Textarea
+              id="content"
               required
               rows={15}
               value={formData.content}
               onChange={e => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
               placeholder="Write your blog post content..."
             />
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
+            </Button>
+            <Button type="submit" className="flex-1">
               Publish Post
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

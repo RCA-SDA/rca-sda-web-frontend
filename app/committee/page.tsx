@@ -10,10 +10,10 @@ export default function CommitteePage() {
   const meetings: CommitteeMeeting[] = [];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-8">
+    <div className="min-h-screen bg-zinc-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900 dark:text-white">
+          <h1 className="text-3xl font-bold text-zinc-900">
             Committee Meetings
           </h1>
           <button
@@ -26,8 +26,8 @@ export default function CommitteePage() {
 
         <div className="space-y-6">
           {meetings.length === 0 ? (
-            <div className="bg-white dark:bg-zinc-900 rounded-lg p-12 text-center">
-              <p className="text-zinc-500 dark:text-zinc-400">
+            <div className="bg-white rounded-lg p-12 text-center">
+              <p className="text-zinc-500">
                 No meeting notes yet. Add your first meeting notes to get started.
               </p>
             </div>
@@ -48,25 +48,25 @@ export default function CommitteePage() {
 
 function MeetingCard({ meeting }: { meeting: CommitteeMeeting }) {
   return (
-    <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 shadow-sm">
+    <div className="bg-white rounded-lg p-6 shadow-sm">
       <div className="flex justify-between items-start mb-4">
-        <h3 className="text-xl font-semibold text-zinc-900 dark:text-white">
+        <h3 className="text-xl font-semibold text-zinc-900">
           {meeting.title}
         </h3>
-        <span className="text-sm text-zinc-500 dark:text-zinc-400">
+        <span className="text-sm text-zinc-500">
           {new Date(meeting.date).toLocaleDateString()}
         </span>
       </div>
       
-      <div className="prose dark:prose-invert max-w-none mb-4">
-        <p className="text-zinc-700 dark:text-zinc-300 whitespace-pre-wrap">
+      <div className="prose max-w-none mb-4">
+        <p className="text-zinc-700 whitespace-pre-wrap">
           {meeting.notes}
         </p>
       </div>
 
       {meeting.attendees.length > 0 && (
-        <div className="border-t border-zinc-200 dark:border-zinc-800 pt-4">
-          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <div className="border-t border-zinc-200 pt-4">
+          <p className="text-sm text-zinc-600">
             Attendees: {meeting.attendees.join(', ')}
           </p>
         </div>
@@ -101,14 +101,14 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white dark:bg-zinc-900 rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4 text-zinc-900 dark:text-white">
+      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-4 text-zinc-900">
           Add Meeting Notes
         </h2>
         
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium mb-1 text-zinc-700">
               Meeting Title
             </label>
             <input
@@ -116,13 +116,13 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
               placeholder="e.g., Monthly Committee Meeting"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium mb-1 text-zinc-700">
               Date
             </label>
             <input
@@ -130,12 +130,12 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
               required
               value={formData.date}
               onChange={e => setFormData({ ...formData, date: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium mb-1 text-zinc-700">
               Meeting Notes
             </label>
             <textarea
@@ -143,20 +143,20 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
               rows={10}
               value={formData.notes}
               onChange={e => setFormData({ ...formData, notes: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
               placeholder="Enter detailed meeting notes..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700 dark:text-zinc-300">
+            <label className="block text-sm font-medium mb-1 text-zinc-700">
               Attendees (comma-separated)
             </label>
             <input
               type="text"
               value={formData.attendees}
               onChange={e => setFormData({ ...formData, attendees: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
+              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
               placeholder="John Doe, Jane Smith, ..."
             />
           </div>
@@ -165,7 +165,7 @@ function AddMeetingModal({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-700 dark:text-zinc-300"
+              className="flex-1 px-4 py-2 border border-zinc-300 rounded-lg hover:bg-zinc-100 text-zinc-700"
             >
               Cancel
             </button>

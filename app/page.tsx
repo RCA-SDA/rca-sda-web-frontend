@@ -1,10 +1,12 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-zinc-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
+      <section className="bg-white text-black py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-5xl font-bold mb-6">Welcome to RCA-SDA</h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
@@ -12,25 +14,23 @@ export default function Home() {
             share testimonies, and stay connected with our community.
           </p>
           <div className="flex gap-4 justify-center">
-            <Link
-              href="/members"
-              className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-zinc-100 transition"
-            >
-              View Members
-            </Link>
-            <Link
-              href="/testimonies"
-              className="bg-transparent border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition"
-            >
-              Share Testimony
-            </Link>
+            <Button asChild size="lg" className="rounded-full">
+              <Link href="/members">
+                View Members
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="rounded-full border-2 border-balck text-black hover:bg-white/10 hover:text-black">
+              <Link href="/testimonies">
+                Share Testimony
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900 dark:text-white">
+        <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900">
           Church Management Features
         </h2>
         
@@ -87,36 +87,36 @@ export default function Home() {
       </section>
 
       {/* Church Families Section */}
-      <section className="py-16 bg-white dark:bg-zinc-900">
+      <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900 dark:text-white">
+          <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900">
             Our Church Families
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-blue-50 dark:bg-blue-950 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-lg p-8 text-center">
+              <h3 className="text-2xl font-semibold mb-4 text-zinc-900">
                 Salvation Siblings
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="text-zinc-600">
                 United in faith and fellowship
               </p>
             </div>
             
-            <div className="bg-green-50 dark:bg-green-950 border-2 border-green-200 dark:border-green-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
+            <div className="bg-green-50 border-2 border-green-200 rounded-lg p-8 text-center">
+              <h3 className="text-2xl font-semibold mb-4 text-zinc-900">
                 Ebenezer
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="text-zinc-600">
                 Thus far the Lord has helped us
               </p>
             </div>
             
-            <div className="bg-purple-50 dark:bg-purple-950 border-2 border-purple-200 dark:border-purple-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
+            <div className="bg-purple-50 border-2 border-purple-200 rounded-lg p-8 text-center">
+              <h3 className="text-2xl font-semibold mb-4 text-zinc-900">
                 Jehova-nissi
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="text-zinc-600">
                 The Lord is our banner
               </p>
             </div>
@@ -137,15 +137,17 @@ interface FeatureCardProps {
 function FeatureCard({ title, description, href, icon }: FeatureCardProps) {
   return (
     <Link href={href}>
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
-        <div className="text-4xl mb-4">{icon}</div>
-        <h3 className="text-xl font-semibold mb-2 text-zinc-900 dark:text-white">
-          {title}
-        </h3>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          {description}
-        </p>
-      </div>
+      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+        <CardHeader>
+          <div className="text-4xl mb-2">{icon}</div>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardDescription className="text-base">
+            {description}
+          </CardDescription>
+        </CardContent>
+      </Card>
     </Link>
   );
 }
