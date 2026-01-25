@@ -1,36 +1,37 @@
 import Link from 'next/link';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide-react';
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950">
+    <div className="min-h-screen bg-[#fafafa]">
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-blue-600 to-purple-700 text-white py-20">
+      <section className="bg-gradient-to-br from-yellow-400 via-pink-400 to-blue-400 text-black py-20 border-b-4 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-5xl font-bold mb-6">Welcome to RCA-SDA</h1>
-          <p className="text-xl mb-8 max-w-2xl mx-auto">
+          <h1 className="text-6xl font-black mb-6 uppercase tracking-tight transform -rotate-1">Welcome to RCA-SDA</h1>
+          <p className="text-xl mb-8 max-w-2xl mx-auto font-bold">
             Manage all church activities in one place. Track members, record Sabbath attendance, 
             share testimonies, and stay connected with our community.
           </p>
-          <div className="flex gap-4 justify-center">
-            <Link
-              href="/members"
-              className="bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-zinc-100 transition"
-            >
-              View Members
-            </Link>
-            <Link
-              href="/testimonies"
-              className="bg-transparent border-2 border-white px-8 py-3 rounded-full font-semibold hover:bg-white/10 transition"
-            >
-              Share Testimony
-            </Link>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <Button asChild size="lg" variant="outline" className="bg-white">
+              <Link href="/members">
+                View Members
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="secondary">
+              <Link href="/testimonies">
+                Share Testimony
+              </Link>
+            </Button>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900 dark:text-white">
+        <h2 className="text-4xl font-black text-center mb-12 uppercase transform -rotate-1">
           Church Management Features
         </h2>
         
@@ -39,84 +40,84 @@ export default function Home() {
             title="Member Management"
             description="View and manage all church members organized by families: Salvation Siblings, Ebenezer, and Jehova-nissi."
             href="/members"
-            icon="👥"
+            icon={<Users className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Sabbath School Report"
             description="Family fathers and mothers can mark attendance and track spiritual activities for their family members."
             href="/sabbath-report"
-            icon="📋"
+            icon={<Calendar className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Committee Notes"
             description="Document and access RCA-SDA committee meeting notes and decisions."
             href="/committee"
-            icon="📝"
+            icon={<FileText className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Choir Songs"
             description="Browse song lyrics and listen to choir recordings. Choir secretaries can upload new songs."
             href="/choir"
-            icon="🎵"
+            icon={<Music className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Church Blog"
             description="Read about church events, Word of God teachings, and stay updated with church activities."
             href="/blog"
-            icon="✍️"
+            icon={<BookOpen className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Gallery"
             description="View photos and videos from church events and activities."
             href="/gallery"
-            icon="📸"
+            icon={<Image className="w-12 h-12" />}
           />
           
           <FeatureCard
             title="Testimonies"
             description="Share your testimony and read how God is working in the lives of our members."
             href="/testimonies"
-            icon="🙏"
+            icon={<Heart className="w-12 h-12" />}
           />
         </div>
       </section>
 
       {/* Church Families Section */}
-      <section className="py-16 bg-white dark:bg-zinc-900">
+      <section className="py-16 bg-white border-y-4 border-black">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center mb-12 text-zinc-900 dark:text-white">
+          <h2 className="text-4xl font-black text-center mb-12 uppercase transform rotate-1">
             Our Church Families
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-blue-50 dark:bg-blue-950 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
+            <div className="bg-blue-300 border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-4 uppercase">
                 Salvation Siblings
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="font-bold">
                 United in faith and fellowship
               </p>
             </div>
             
-            <div className="bg-green-50 dark:bg-green-950 border-2 border-green-200 dark:border-green-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
+            <div className="bg-green-300 border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-4 uppercase">
                 Ebenezer
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="font-bold">
                 Thus far the Lord has helped us
               </p>
             </div>
             
-            <div className="bg-purple-50 dark:bg-purple-950 border-2 border-purple-200 dark:border-purple-800 rounded-lg p-8 text-center">
-              <h3 className="text-2xl font-semibold mb-4 text-zinc-900 dark:text-white">
+            <div className="bg-purple-300 border-4 border-black p-8 text-center shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transform hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[12px_12px_0px_0px_rgba(0,0,0,1)] transition-all">
+              <h3 className="text-2xl font-black mb-4 uppercase">
                 Jehova-nissi
               </h3>
-              <p className="text-zinc-600 dark:text-zinc-400">
+              <p className="font-bold">
                 The Lord is our banner
               </p>
             </div>
@@ -131,21 +132,23 @@ interface FeatureCardProps {
   title: string;
   description: string;
   href: string;
-  icon: string;
+  icon: React.ReactNode;
 }
 
 function FeatureCard({ title, description, href, icon }: FeatureCardProps) {
   return (
     <Link href={href}>
-      <div className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg p-6 hover:shadow-lg transition-shadow cursor-pointer h-full">
-        <div className="text-4xl mb-4">{icon}</div>
-        <h3 className="text-xl font-semibold mb-2 text-zinc-900 dark:text-white">
-          {title}
-        </h3>
-        <p className="text-zinc-600 dark:text-zinc-400">
-          {description}
-        </p>
-      </div>
+      <Card className="h-full hover:shadow-lg transition-shadow cursor-pointer">
+        <CardHeader>
+          <div className="mb-2 text-black">{icon}</div>
+          <CardTitle>{title}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <CardDescription className="text-base">
+            {description}
+          </CardDescription>
+        </CardContent>
+      </Card>
     </Link>
   );
 }

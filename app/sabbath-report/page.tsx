@@ -2,11 +2,18 @@
 
 import { useState } from 'react';
 import { Family, Member, SabbathAttendance } from '@/types';
-import { FAMILIES, DAYS_OF_WEEK } from '@/lib/constants';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Calendar } from '@/components/ui/calendar';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Calendar as CalendarIcon, Save } from 'lucide-react';
+import { format } from 'date-fns';
 
 export default function SabbathReportPage() {
-  const [selectedFamily, setSelectedFamily] = useState<Family>('Salvation Siblings');
-  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [showCalendar, setShowCalendar] = useState(false);
 
   // Mock current user - replace with actual auth
   const currentUser = {
@@ -19,60 +26,97 @@ export default function SabbathReportPage() {
   const familyMembers: Member[] = [];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 py-8">
+    <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-zinc-900 dark:text-white mb-8">
+        <h1 className="text-4xl font-black uppercase transform -rotate-1 mb-8">
           Sabbath School Report
         </h1>
 
         {/* Date Selection */}
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 mb-6">
-          <label className="block text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">
-            Select Date
-          </label>
-          <input
-            type="date"
-            value={selectedDate}
-            onChange={e => setSelectedDate(e.target.value)}
-            className="px-4 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
-          />
-        </div>
+        <Card className="mb-6 bg-yellow-200">
+          <CardContent className="pt-6">
+            <Label htmlFor="date" className="flex items-center gap-2 mb-2">
+              <CalendarIcon className="w-5 h-5" />
+              Select Date
+            </Label>
+            <div className="flex gap-4 items-center flex-wrap">
+              <Input
+                id="date"
+                type="text"
+                value={format(selectedDate, 'MMMM dd, yyyy')}
+                readOnly
+                className="max-w-xs cursor-pointer"
+                onClick={() => setShowCalendar(true)}
+              />
+              <Button 
+                variant="default"
+                onClick={() => setShowCalendar(true)}
+              >
+                <CalendarIcon className="w-4 h-4 mr-2" />
+                Choose Date
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Family Selection (only for authorized users) */}
         {(currentUser.role === 'Father' || currentUser.role === 'Mother') && (
-          <div className="bg-white dark:bg-zinc-900 rounded-lg p-6 mb-6">
-            <h2 className="text-xl font-semibold mb-4 text-zinc-900 dark:text-white">
-              Your Family: {currentUser.family}
-            </h2>
-            <p className="text-zinc-600 dark:text-zinc-400">
-              You can mark attendance for members of your family.
-            </p>
-          </div>
+          <Card className="mb-6 bg-blue-200">
+            <CardHeader>
+              <CardTitle className="uppercase">Your Family: {currentUser.family}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="font-bold">
+                You can mark attendance for members of your family.
+              </p>
+            </CardContent>
+          </Card>
         )}
 
         {/* Attendance Form */}
-        <div className="bg-white dark:bg-zinc-900 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-6 text-zinc-900 dark:text-white">
-            Mark Attendance - {currentUser.family}
-          </h2>
+        <Card className="bg-green-200">
+          <CardHeader>
+            <CardTitle className="uppercase">Mark Attendance - {currentUser.family}</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {familyMembers.length === 0 ? (
+              <p className="text-center py-8 font-bold">
+                No members found in your family. Please add members first.
+              </p>
+            ) : (
+              <div className="space-y-6">
+                {familyMembers.map(member => (
+                  <AttendanceForm
+                    key={member.id}
+                    member={member}
+                    date={format(selectedDate, 'yyyy-MM-dd')}
+                    recordedBy={currentUser.id}
+                  />
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-          {familyMembers.length === 0 ? (
-            <p className="text-zinc-500 dark:text-zinc-400 text-center py-8">
-              No members found in your family. Please add members first.
-            </p>
-          ) : (
-            <div className="space-y-6">
-              {familyMembers.map(member => (
-                <AttendanceForm
-                  key={member.id}
-                  member={member}
-                  date={selectedDate}
-                  recordedBy={currentUser.id}
-                />
-              ))}
-            </div>
-          )}
-        </div>
+        {/* Calendar Modal */}
+        <Dialog open={showCalendar} onOpenChange={setShowCalendar}>
+          <DialogContent className="max-w-fit p-6">
+            <DialogHeader>
+              <DialogTitle>Select Date</DialogTitle>
+            </DialogHeader>
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => {
+                if (date) {
+                  setSelectedDate(date);
+                  setShowCalendar(false);
+                }
+              }}
+              className="w-fit mx-auto"
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
@@ -112,93 +156,91 @@ function AttendanceForm({
   };
 
   return (
-    <div className="border border-zinc-200 dark:border-zinc-800 rounded-lg p-6">
-      <h3 className="text-lg font-semibold mb-4 text-zinc-900 dark:text-white">
-        {member.name}
-      </h3>
+    <Card className="bg-purple-200">
+      <CardHeader>
+        <CardTitle className="uppercase">{member.name}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid md:grid-cols-2 gap-4">
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.attendedSabbath}
+              onChange={e => setFormData({ ...formData, attendedSabbath: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Attended Sabbath</span>
+          </label>
 
-      <div className="grid md:grid-cols-2 gap-4">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.attendedSabbath}
-            onChange={e => setFormData({ ...formData, attendedSabbath: e.target.checked })}
-            className="w-4 h-4 rounded"
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.attendedStartingSabbath}
+              onChange={e => setFormData({ ...formData, attendedStartingSabbath: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Attended Starting Sabbath</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.visitedPeople}
+              onChange={e => setFormData({ ...formData, visitedPeople: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Visited People</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.wasVisited}
+              onChange={e => setFormData({ ...formData, wasVisited: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Was Visited</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.helpedPeople}
+              onChange={e => setFormData({ ...formData, helpedPeople: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Helped People</span>
+          </label>
+
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.wasHelped}
+              onChange={e => setFormData({ ...formData, wasHelped: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Was Helped</span>
+          </label>
+        </div>
+
+        <div className="mt-4">
+          <Label htmlFor="bible-days">Days Studied Bible (0-7)</Label>
+          <Input
+            id="bible-days"
+            type="number"
+            min="0"
+            max="7"
+            value={formData.studiedBible}
+            onChange={e => setFormData({ ...formData, studiedBible: parseInt(e.target.value) || 0 })}
+            className="w-32 mt-2"
           />
-          <span className="text-zinc-700 dark:text-zinc-300">Attended Sabbath</span>
-        </label>
+        </div>
 
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.attendedStartingSabbath}
-            onChange={e => setFormData({ ...formData, attendedStartingSabbath: e.target.checked })}
-            className="w-4 h-4 rounded"
-          />
-          <span className="text-zinc-700 dark:text-zinc-300">Attended Starting Sabbath</span>
-        </label>
-
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.visitedPeople}
-            onChange={e => setFormData({ ...formData, visitedPeople: e.target.checked })}
-            className="w-4 h-4 rounded"
-          />
-          <span className="text-zinc-700 dark:text-zinc-300">Visited People</span>
-        </label>
-
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.wasVisited}
-            onChange={e => setFormData({ ...formData, wasVisited: e.target.checked })}
-            className="w-4 h-4 rounded"
-          />
-          <span className="text-zinc-700 dark:text-zinc-300">Was Visited</span>
-        </label>
-
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.helpedPeople}
-            onChange={e => setFormData({ ...formData, helpedPeople: e.target.checked })}
-            className="w-4 h-4 rounded"
-          />
-          <span className="text-zinc-700 dark:text-zinc-300">Helped People</span>
-        </label>
-
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={formData.wasHelped}
-            onChange={e => setFormData({ ...formData, wasHelped: e.target.checked })}
-            className="w-4 h-4 rounded"
-          />
-          <span className="text-zinc-700 dark:text-zinc-300">Was Helped</span>
-        </label>
-      </div>
-
-      <div className="mt-4">
-        <label className="block text-sm font-medium mb-2 text-zinc-700 dark:text-zinc-300">
-          Days Studied Bible (0-7)
-        </label>
-        <input
-          type="number"
-          min="0"
-          max="7"
-          value={formData.studiedBible}
-          onChange={e => setFormData({ ...formData, studiedBible: parseInt(e.target.value) || 0 })}
-          className="w-32 px-3 py-2 border border-zinc-300 dark:border-zinc-700 rounded-lg bg-white dark:bg-zinc-800 text-zinc-900 dark:text-white"
-        />
-      </div>
-
-      <button
-        onClick={handleSubmit}
-        className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-      >
-        Save Attendance
-      </button>
-    </div>
+        <Button onClick={handleSubmit} className="mt-4">
+          <Save className="w-4 h-4 mr-2" />
+          Save Attendance
+        </Button>
+      </CardContent>
+    </Card>
   );
 }
