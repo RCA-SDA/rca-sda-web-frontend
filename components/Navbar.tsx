@@ -2,12 +2,22 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Menu, X, Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
@@ -25,7 +35,13 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="bg-white border-b-8 border-black sticky top-0 z-50">
+    <nav 
+      className={`border-b-8 border-black sticky top-0 z-50 transition-all duration-300 ${
+        isScrolled 
+          ? 'bg-white/80 backdrop-blur-md shadow-[0px_8px_0px_0px_rgba(0,0,0,1)]' 
+          : 'bg-white'
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-20">
           <div className="flex items-center">
@@ -71,7 +87,13 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="md:hidden border-t-4 border-black bg-yellow-300">
+        <div 
+          className={`md:hidden border-t-4 border-black transition-all duration-300 ${
+            isScrolled 
+              ? 'bg-yellow-300/90 backdrop-blur-md' 
+              : 'bg-yellow-300'
+          }`}
+        >
           <div className="px-2 pt-2 pb-3 space-y-1">
             {navLinks.map(({ href, label, icon: Icon }) => (
               <Link
