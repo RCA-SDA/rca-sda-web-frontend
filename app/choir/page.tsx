@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { Song } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function ChoirPage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -16,28 +22,29 @@ export default function ChoirPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8">
+    <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-zinc-900">
+          <h1 className="text-4xl font-black uppercase transform -rotate-1">
             Choir Songs
           </h1>
           {currentUser.role === 'Choir Secretary' && (
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
-            >
+            <Button onClick={() => setShowAddModal(true)}>
               Add Song
-            </button>
+            </Button>
           )}
         </div>
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {songs.length === 0 ? (
-            <div className="col-span-full bg-white rounded-lg p-12 text-center">
-              <p className="text-zinc-500">
-                No songs yet. {currentUser.role === 'Choir Secretary' && 'Add your first song to get started.'}
-              </p>
+            <div className="col-span-full">
+              <Card>
+                <CardContent className="p-12 text-center">
+                  <p className="font-bold">
+                    No songs yet. {currentUser.role === 'Choir Secretary' && 'Add your first song to get started.'}
+                  </p>
+                </CardContent>
+              </Card>
             </div>
           ) : (
             songs.map(song => (
@@ -67,47 +74,39 @@ export default function ChoirPage() {
 
 function SongCard({ song, onClick }: { song: Song; onClick: () => void }) {
   return (
-    <div
+    <Card
       onClick={onClick}
-      className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-lg transition-shadow"
+      className="cursor-pointer bg-gradient-to-br from-purple-200 to-pink-200"
     >
-      <div className="flex items-start justify-between mb-4">
-        <h3 className="text-lg font-semibold text-zinc-900">
-          {song.title}
-        </h3>
-        {song.audioUrl && (
-          <span className="text-2xl">🎵</span>
-        )}
-      </div>
-      
-      <p className="text-sm text-zinc-600 mb-2">
-        {song.choirName}
-      </p>
-      
-      <p className="text-xs text-zinc-500">
-        {new Date(song.createdAt).toLocaleDateString()}
-      </p>
-    </div>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <CardTitle className="text-lg uppercase">{song.title}</CardTitle>
+          {song.audioUrl && (
+            <span className="text-2xl">🎵</span>
+          )}
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm font-bold mb-2">
+          {song.choirName}
+        </p>
+        <p className="text-xs font-black">
+          {new Date(song.createdAt).toLocaleDateString()}
+        </p>
+      </CardContent>
+    </Card>
   );
 }
 
 function SongDetailModal({ song, onClose }: { song: Song; onClose: () => void }) {
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-start mb-4">
-          <h2 className="text-2xl font-bold text-zinc-900">
-            {song.title}
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-zinc-500 hover:text-zinc-700"
-          >
-            ✕
-          </button>
-        </div>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{song.title}</DialogTitle>
+        </DialogHeader>
 
-        <p className="text-zinc-600 mb-4">
+        <p className="font-bold mb-4">
           {song.choirName}
         </p>
 
@@ -120,14 +119,18 @@ function SongDetailModal({ song, onClose }: { song: Song; onClose: () => void })
           </div>
         )}
 
-        <div className="bg-zinc-50 rounded-lg p-4">
-          <h3 className="font-semibold mb-2 text-zinc-900">Lyrics</h3>
-          <pre className="whitespace-pre-wrap text-zinc-700 font-sans">
-            {song.lyrics}
-          </pre>
-        </div>
-      </div>
-    </div>
+        <Card className="bg-yellow-100 border-2">
+          <CardHeader>
+            <CardTitle className="text-lg">Lyrics</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <pre className="whitespace-pre-wrap font-bold font-sans">
+              {song.lyrics}
+            </pre>
+          </CardContent>
+        </Card>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -148,82 +151,72 @@ function AddSongModal({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4 text-zinc-900">
-          Add New Song
-        </h2>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Add New Song</DialogTitle>
+        </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Song Title
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="title">Song Title</Label>
+            <Input
+              id="title"
               type="text"
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Choir Name
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="choirName">Choir Name</Label>
+            <Input
+              id="choirName"
               type="text"
               required
               value={formData.choirName}
               onChange={e => setFormData({ ...formData, choirName: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Lyrics
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="lyrics">Lyrics</Label>
+            <Textarea
+              id="lyrics"
               required
               rows={10}
               value={formData.lyrics}
               onChange={e => setFormData({ ...formData, lyrics: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
               placeholder="Enter song lyrics..."
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Audio File (optional)
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="audio">Audio File (optional)</Label>
+            <Input
+              id="audio"
               type="file"
               accept="audio/*"
               onChange={e => setFormData({ ...formData, audioFile: e.target.files?.[0] || null })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
             />
           </div>
 
           <div className="flex gap-3 pt-4">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-zinc-300 rounded-lg hover:bg-zinc-100 text-zinc-700"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
+            </Button>
+            <Button type="submit" className="flex-1">
               Add Song
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

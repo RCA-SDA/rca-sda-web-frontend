@@ -2,6 +2,12 @@
 
 import { useState } from 'react';
 import { Testimony } from '@/types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 export default function TestimoniesPage() {
   const [showAddModal, setShowAddModal] = useState(false);
@@ -13,30 +19,29 @@ export default function TestimoniesPage() {
   const approvedTestimonies = testimonies.filter(t => t.isApproved);
 
   return (
-    <div className="min-h-screen bg-zinc-50 py-8">
+    <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-zinc-900 mb-4">
+          <h1 className="text-5xl font-black uppercase mb-4 transform -rotate-1">
             Testimonies
           </h1>
-          <p className="text-lg text-zinc-600 max-w-2xl mx-auto mb-8">
+          <p className="text-lg font-bold max-w-2xl mx-auto mb-8">
             Share how God is working in your life and be encouraged by the testimonies of others.
           </p>
-          <button
-            onClick={() => setShowAddModal(true)}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition font-semibold"
-          >
+          <Button onClick={() => setShowAddModal(true)} size="lg">
             Share Your Testimony
-          </button>
+          </Button>
         </div>
 
         <div className="space-y-6">
           {approvedTestimonies.length === 0 ? (
-            <div className="bg-white rounded-lg p-12 text-center">
-              <p className="text-zinc-500">
-                No testimonies yet. Be the first to share your testimony!
-              </p>
-            </div>
+            <Card>
+              <CardContent className="p-12 text-center">
+                <p className="font-bold">
+                  No testimonies yet. Be the first to share your testimony!
+                </p>
+              </CardContent>
+            </Card>
           ) : (
             approvedTestimonies.map(testimony => (
               <TestimonyCard key={testimony.id} testimony={testimony} />
@@ -54,27 +59,26 @@ export default function TestimoniesPage() {
 
 function TestimonyCard({ testimony }: { testimony: Testimony }) {
   return (
-    <article className="bg-white rounded-lg p-8 shadow-sm">
-      <div className="flex items-start gap-4 mb-4">
-        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-          <span className="text-2xl">🙏</span>
+    <Card className="bg-gradient-to-br from-pink-200 to-yellow-200">
+      <CardHeader>
+        <div className="flex items-start gap-4">
+          <div className="w-12 h-12 bg-blue-400 border-4 border-black flex items-center justify-center flex-shrink-0">
+            <span className="text-2xl">🙏</span>
+          </div>
+          <div className="flex-1">
+            <CardTitle className="uppercase mb-2">{testimony.title}</CardTitle>
+            <p className="text-sm font-bold">
+              By {testimony.author} • {new Date(testimony.createdAt).toLocaleDateString()}
+            </p>
+          </div>
         </div>
-        <div className="flex-1">
-          <h2 className="text-2xl font-bold text-zinc-900 mb-2">
-            {testimony.title}
-          </h2>
-          <p className="text-sm text-zinc-600">
-            By {testimony.author} • {new Date(testimony.createdAt).toLocaleDateString()}
-          </p>
-        </div>
-      </div>
-
-      <div className="prose max-w-none">
-        <p className="text-zinc-700 whitespace-pre-wrap leading-relaxed">
+      </CardHeader>
+      <CardContent>
+        <p className="font-bold whitespace-pre-wrap leading-relaxed">
           {testimony.content}
         </p>
-      </div>
-    </article>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -104,112 +108,99 @@ function AddTestimonyModal({ onClose }: { onClose: () => void }) {
 
   if (submitted) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-        <div className="bg-white rounded-lg max-w-md w-full p-8 text-center">
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent className="max-w-md text-center bg-green-300">
           <div className="text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold mb-4 text-zinc-900">
-            Thank You!
-          </h2>
-          <p className="text-zinc-600 mb-6">
+          <DialogTitle>Thank You!</DialogTitle>
+          <p className="font-bold mb-6">
             Your testimony has been submitted and is pending approval. 
             It will be visible to others once approved by church leadership.
           </p>
-          <button
-            onClick={onClose}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-          >
+          <Button onClick={onClose} className="w-full">
             Close
-          </button>
-        </div>
-      </div>
+          </Button>
+        </DialogContent>
+      </Dialog>
     );
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-4 text-zinc-900">
-          Share Your Testimony
-        </h2>
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Share Your Testimony</DialogTitle>
+        </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Your Name
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="author">Your Name</Label>
+            <Input
+              id="author"
               type="text"
               required
               value={formData.author}
               onChange={e => setFormData({ ...formData, author: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Email (optional)
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="email">Email (optional)</Label>
+            <Input
+              id="email"
               type="email"
               value={formData.authorEmail}
               onChange={e => setFormData({ ...formData, authorEmail: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Title
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="title">Title</Label>
+            <Input
+              id="title"
               type="text"
               required
               value={formData.title}
               onChange={e => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
               placeholder="e.g., How God Healed My Family"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium mb-1 text-zinc-700">
-              Your Testimony
-            </label>
-            <textarea
+          <div className="space-y-2">
+            <Label htmlFor="content">Your Testimony</Label>
+            <Textarea
+              id="content"
               required
               rows={12}
               value={formData.content}
               onChange={e => setFormData({ ...formData, content: e.target.value })}
-              className="w-full px-3 py-2 border border-zinc-300 rounded-lg bg-white text-zinc-900"
               placeholder="Share your story of how God has worked in your life..."
             />
           </div>
 
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm text-blue-800">
-              Your testimony will be reviewed before being published. 
-              This helps maintain a respectful and encouraging environment.
-            </p>
-          </div>
+          <Card className="bg-blue-200 border-2">
+            <CardContent className="p-4">
+              <p className="text-sm font-bold">
+                Your testimony will be reviewed before being published. 
+                This helps maintain a respectful and encouraging environment.
+              </p>
+            </CardContent>
+          </Card>
 
           <div className="flex gap-3 pt-4">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={onClose}
-              className="flex-1 px-4 py-2 border border-zinc-300 rounded-lg hover:bg-zinc-100 text-zinc-700"
+              className="flex-1"
             >
               Cancel
-            </button>
-            <button
-              type="submit"
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-            >
+            </Button>
+            <Button type="submit" className="flex-1">
               Submit Testimony
-            </button>
+            </Button>
           </div>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }
