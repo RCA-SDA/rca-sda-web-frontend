@@ -238,7 +238,7 @@ export default function GalleryPage() {
           itemsPerPage={itemsPerPage}
           totalItems={searchedItems.length}
           onItemsPerPageChange={setItemsPerPage}
-          itemsPerPageOptions={[6, 12, 24, 48]}
+          itemsPerPageOptions={[4, 8, 12, 36,48]}
         />
 
         {showAddModal && (

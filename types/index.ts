@@ -38,8 +38,11 @@ export interface CommitteeMeeting {
   id: string;
   title: string;
   date: Date;
-  notes: string;
+  recorder: string; // Person recording the meeting
   attendees: string[];
+  agenda: string[]; // List of agenda items
+  notes: string; // General meeting notes
+  decisions: string[]; // List of decisions made
   createdBy: string;
   createdAt: Date;
 }
