@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { Menu, X, Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide-react';
+import NextImage from 'next/image';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,11 +48,24 @@ export default function Navbar() {
           <div className="flex items-center">
             <Link 
               href="/" 
-              className={`text-2xl font-black uppercase tracking-tight transform hover:scale-105 transition-transform ${
-                isActive('/') ? 'text-yellow-500' : ''
+              className={`flex items-center gap-3 transform hover:scale-105 transition-all group ${
+                isActive('/') ? 'scale-105' : ''
               }`}
             >
-              RCA-SDA
+              <div className="relative w-14 h-14 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] group-hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] group-hover:translate-x-[-2px] group-hover:translate-y-[-2px] transition-all bg-white overflow-hidden">
+                <NextImage 
+                  src="/logo.jpeg" 
+                  alt="RCA-SDA Logo" 
+                  fill
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <span className={`text-2xl font-black uppercase tracking-tight ${
+                isActive('/') ? 'text-yellow-500' : ''
+              }`}>
+                RCA-SDA
+              </span>
             </Link>
           </div>
 
