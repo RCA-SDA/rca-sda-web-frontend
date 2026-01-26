@@ -8,12 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Pagination } from '@/components/Pagination';
 import { Calendar as CalendarIcon, Save } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function SabbathReportPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Mock current user - replace with actual auth
   const currentUser = {
@@ -23,7 +26,67 @@ export default function SabbathReportPage() {
   };
 
   // Mock family members - replace with API call
-  const familyMembers: Member[] = [];
+  const familyMembers: Member[] = [
+    {
+      id: '1',
+      name: 'John Smith',
+      family: 'Salvation Siblings',
+      role: 'Father',
+      email: 'john.smith@example.com',
+      phone: '555-0101',
+      address: '123 Faith Street',
+      dateOfBirth: new Date('1980-05-15'),
+      baptismDate: new Date('2005-08-20'),
+      joinedDate: new Date('2005-08-20'),
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '2',
+      name: 'Sarah Smith',
+      family: 'Salvation Siblings',
+      role: 'Mother',
+      email: 'sarah.smith@example.com',
+      phone: '555-0102',
+      address: '123 Faith Street',
+      dateOfBirth: new Date('1982-09-22'),
+      baptismDate: new Date('2006-03-15'),
+      joinedDate: new Date('2006-03-15'),
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '3',
+      name: 'David Smith',
+      family: 'Salvation Siblings',
+      role: 'Youth',
+      email: 'david.smith@example.com',
+      phone: '555-0103',
+      address: '123 Faith Street',
+      dateOfBirth: new Date('2008-12-10'),
+      baptismDate: new Date('2020-07-18'),
+      joinedDate: new Date('2020-07-18'),
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+    {
+      id: '4',
+      name: 'Emma Smith',
+      family: 'Salvation Siblings',
+      role: 'Child',
+      email: 'emma.smith@example.com',
+      phone: '555-0104',
+      address: '123 Faith Street',
+      dateOfBirth: new Date('2012-04-05'),
+      joinedDate: new Date('2012-04-05'),
+      isActive: true,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+  ];
 
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
@@ -84,16 +147,30 @@ export default function SabbathReportPage() {
                 No members found in your family. Please add members first.
               </p>
             ) : (
-              <div className="space-y-6">
-                {familyMembers.map(member => (
-                  <AttendanceForm
-                    key={member.id}
-                    member={member}
-                    date={format(selectedDate, 'yyyy-MM-dd')}
-                    recordedBy={currentUser.id}
-                  />
-                ))}
-              </div>
+              <>
+                <div className="space-y-6">
+                  {familyMembers
+                    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
+                    .map(member => (
+                      <AttendanceForm
+                        key={member.id}
+                        member={member}
+                        date={format(selectedDate, 'yyyy-MM-dd')}
+                        recordedBy={currentUser.id}
+                      />
+                    ))}
+                </div>
+                
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={Math.ceil(familyMembers.length / itemsPerPage)}
+                  onPageChange={setCurrentPage}
+                  itemsPerPage={itemsPerPage}
+                  totalItems={familyMembers.length}
+                  onItemsPerPageChange={setItemsPerPage}
+                  itemsPerPageOptions={[2, 5, 10, 20]}
+                />
+              </>
             )}
           </CardContent>
         </Card>
@@ -134,7 +211,7 @@ function AttendanceForm({
   const [formData, setFormData] = useState({
     attendedSabbath: false,
     attendedStartingSabbath: false,
-    studiedBible: 0,
+    studiedBible: false,
     visitedPeople: false,
     wasVisited: false,
     helpedPeople: false,
@@ -221,19 +298,16 @@ function AttendanceForm({
             />
             <span>Was Helped</span>
           </label>
-        </div>
 
-        <div className="mt-4">
-          <Label htmlFor="bible-days">Days Studied Bible (0-7)</Label>
-          <Input
-            id="bible-days"
-            type="number"
-            min="0"
-            max="7"
-            value={formData.studiedBible}
-            onChange={e => setFormData({ ...formData, studiedBible: parseInt(e.target.value) || 0 })}
-            className="w-32 mt-2"
-          />
+          <label className="flex items-center gap-2 cursor-pointer font-bold">
+            <input
+              type="checkbox"
+              checked={formData.studiedBible}
+              onChange={e => setFormData({ ...formData, studiedBible: e.target.checked })}
+              className="w-5 h-5 border-4 border-black"
+            />
+            <span>Studied Whole Week</span>
+          </label>
         </div>
 
         <Button onClick={handleSubmit} className="mt-4">
