@@ -246,7 +246,6 @@ export default function FatherPortalPage() {
           <CardContent>
             <div className="grid md:grid-cols-2 gap-4">
               <div className="p-4 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h3 className="font-black text-lg mb-2 uppercase">Weekly Tasks</h3>
                 <ul className="space-y-2 font-bold">
                   <li className="flex items-start gap-2">
                     <CheckSquare className="w-5 h-5 flex-shrink-0 mt-0.5" />
@@ -264,7 +263,6 @@ export default function FatherPortalPage() {
               </div>
 
               <div className="p-4 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-                <h3 className="font-black text-lg mb-2 uppercase">Monthly Tasks</h3>
                 <ul className="space-y-2 font-bold">
                   <li className="flex items-start gap-2">
                     <CheckSquare className="w-5 h-5 flex-shrink-0 mt-0.5" />

@@ -32,7 +32,6 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/members', label: 'Members', icon: Users },
-    { href: '/committee', label: 'Committee', icon: FileText },
     { href: '/choir', label: 'Choir', icon: Music },
     { href: '/blog', label: 'Blog', icon: BookOpen },
     { href: '/gallery', label: 'Gallery', icon: Image },
