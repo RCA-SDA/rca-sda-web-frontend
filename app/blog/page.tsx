@@ -11,11 +11,14 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PenSquare, ArrowRight } from 'lucide-react';
+import { DateSearchFilter } from '@/components/DateSearchFilter';
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory | 'All'>('All');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   
   // Mock data - replace with API call
   const blogs: Blog[] = [
@@ -96,6 +99,23 @@ export default function BlogPage() {
     ? blogs 
     : blogs.filter(b => b.category === selectedCategory);
 
+  // Apply date filter
+  const dateFilteredBlogs = dateFilter
+    ? filteredBlogs.filter(blog => {
+        const blogDate = new Date(blog.createdAt);
+        return blogDate.toDateString() === dateFilter.toDateString();
+      })
+    : filteredBlogs;
+
+  // Apply search filter
+  const searchedBlogs = searchQuery.trim() === ''
+    ? dateFilteredBlogs
+    : dateFilteredBlogs.filter(blog => 
+        blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        blog.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        blog.author.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
   const categories: BlogCategory[] = ['Church News', 'Word of God', 'Events'];
 
   return (
@@ -114,36 +134,48 @@ export default function BlogPage() {
         </div>
 
         {/* Category Filter */}
-        <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
-          <Button
-            variant={selectedCategory === 'All' ? 'default' : 'outline'}
-            onClick={() => setSelectedCategory('All')}
-          >
-            All Posts
-          </Button>
-          {categories.map(category => (
+        <div className="flex gap-4 mb-8 overflow-x-auto pb-2 flex-wrap items-center">
+          <div className="flex gap-4">
             <Button
-              key={category}
-              variant={selectedCategory === category ? 'default' : 'outline'}
-              onClick={() => setSelectedCategory(category)}
+              variant={selectedCategory === 'All' ? 'default' : 'outline'}
+              onClick={() => setSelectedCategory('All')}
             >
-              {category}
+              All Posts
             </Button>
-          ))}
+            {categories.map(category => (
+              <Button
+                key={category}
+                variant={selectedCategory === category ? 'default' : 'outline'}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Button>
+            ))}
+          </div>
+
+          <DateSearchFilter
+            dateFilter={dateFilter}
+            onDateChange={setDateFilter}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            searchPlaceholder="Search blog posts..."
+          />
         </div>
 
         {/* Blog Posts */}
         <div className="space-y-6">
-          {filteredBlogs.length === 0 ? (
+          {searchedBlogs.length === 0 ? (
             <Card>
               <CardContent className="p-12 text-center">
                 <p className="text-zinc-500">
-                  No blog posts yet. {currentUser.role === 'Leader' && 'Write your first post to get started.'}
+                  {searchQuery.trim() !== '' || dateFilter
+                    ? 'No blog posts found matching your filters.'
+                    : `No blog posts yet. ${currentUser.role === 'Leader' ? 'Write your first post to get started.' : ''}`}
                 </p>
               </CardContent>
             </Card>
           ) : (
-            filteredBlogs.map(blog => (
+            searchedBlogs.map(blog => (
               <BlogCard 
                 key={blog.id} 
                 blog={blog} 
