@@ -10,18 +10,153 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, Image as ImageIcon, Video, Play } from 'lucide-react';
+import { DateSearchFilter } from '@/components/DateSearchFilter';
+import { Pagination } from '@/components/Pagination';
 
 export default function GalleryPage() {
   const [filter, setFilter] = useState<MediaType | 'All'>('All');
   const [showAddModal, setShowAddModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
   
   // Mock data - replace with API call
-  const galleryItems: GalleryItem[] = [];
+  const galleryItems: GalleryItem[] = [
+    {
+      id: '1',
+      title: 'Sunday Worship Service',
+      description: 'Beautiful worship service with the congregation',
+      mediaUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1438232992991-995b7058bbb3?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-01-15'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '3',
+      title: 'Youth Fellowship',
+      description: 'Youth group gathering and fellowship',
+      mediaUrl: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-01-22'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '4',
+      title: 'Baptism Ceremony',
+      description: 'Celebrating new members joining our church family',
+      mediaUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-01-25'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '5',
+      title: 'Community Outreach',
+      description: 'Serving our community with love',
+      mediaUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-02-01'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '6',
+      title: 'Prayer Meeting',
+      description: 'Weekly prayer and worship gathering',
+      mediaUrl: 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-02-05'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '8',
+      title: 'Easter Celebration',
+      description: 'Celebrating the resurrection of our Lord',
+      mediaUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1519741497674-611481863552?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-03-31'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '9',
+      title: 'Worship Highlights',
+      description: 'Video highlights from our worship service',
+      mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=400',
+      mediaType: 'video',
+      createdAt: new Date('2024-02-10'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '10',
+      title: 'Bible Study Group',
+      description: 'Diving deep into God\'s Word together',
+      mediaUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-02-12'),
+      uploadedBy: 'admin'
+    },
+    {
+      id: '11',
+      title: 'Church Picnic',
+      description: 'Fellowship and fun in the great outdoors',
+      mediaUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400',
+      mediaType: 'image',
+      createdAt: new Date('2024-02-15'),
+      uploadedBy: 'admin'
+    },
+    
+    {
+      id: '13',
+      title: 'Choir Rehearsal',
+      description: 'Behind the scenes of our choir practice session',
+      mediaUrl: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4',
+      thumbnailUrl: 'https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=400',
+      mediaType: 'video',
+      createdAt: new Date('2024-02-20'),
+      uploadedBy: 'admin'
+    }
+  ];
 
   const filteredItems = filter === 'All' 
     ? galleryItems 
     : galleryItems.filter(item => item.mediaType === filter);
+
+  // Apply date filter
+  const dateFilteredItems = dateFilter
+    ? filteredItems.filter(item => {
+        const itemDate = new Date(item.createdAt);
+        return itemDate.toDateString() === dateFilter.toDateString();
+      })
+    : filteredItems;
+
+  // Apply search filter
+  const searchedItems = searchQuery.trim() === ''
+    ? dateFilteredItems
+    : dateFilteredItems.filter(item => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+  // Pagination
+  const totalPages = Math.ceil(searchedItems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = searchedItems.slice(startIndex, startIndex + itemsPerPage);
+
+  // Reset to page 1 when filters change
+  const handleFilterChange = (filterFn: () => void) => {
+    filterFn();
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
@@ -37,44 +172,56 @@ export default function GalleryPage() {
         </div>
 
         {/* Filter */}
-        <div className="flex gap-4 mb-8">
-          <Button
-            variant={filter === 'All' ? 'default' : 'outline'}
-            onClick={() => setFilter('All')}
-          >
-            <ImageIcon className="w-4 h-4 mr-2" />
-            All
-          </Button>
-          <Button
-            variant={filter === 'image' ? 'default' : 'outline'}
-            onClick={() => setFilter('image')}
-          >
-            <ImageIcon className="w-4 h-4 mr-2" />
-            Photos
-          </Button>
-          <Button
-            variant={filter === 'video' ? 'default' : 'outline'}
-            onClick={() => setFilter('video')}
-          >
-            <Video className="w-4 h-4 mr-2" />
-            Videos
-          </Button>
+        <div className="flex gap-4 mb-8 flex-wrap items-center">
+          <div className="flex gap-4">
+            <Button
+              variant={filter === 'All' ? 'default' : 'outline'}
+              onClick={() => handleFilterChange(() => setFilter('All'))}
+            >
+              <ImageIcon className="w-4 h-4 mr-2" />
+              All
+            </Button>
+            <Button
+              variant={filter === 'image' ? 'default' : 'outline'}
+              onClick={() => handleFilterChange(() => setFilter('image'))}
+            >
+              <ImageIcon className="w-4 h-4 mr-2" />
+              Photos
+            </Button>
+            <Button
+              variant={filter === 'video' ? 'default' : 'outline'}
+              onClick={() => handleFilterChange(() => setFilter('video'))}
+            >
+              <Video className="w-4 h-4 mr-2" />
+              Videos
+            </Button>
+          </div>
+          
+          <DateSearchFilter
+            dateFilter={dateFilter}
+            onDateChange={(date) => handleFilterChange(() => setDateFilter(date))}
+            searchQuery={searchQuery}
+            onSearchChange={(query) => handleFilterChange(() => setSearchQuery(query))}
+            searchPlaceholder="Search gallery..."
+          />
         </div>
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredItems.length === 0 ? (
+          {searchedItems.length === 0 ? (
             <div className="col-span-full">
               <Card>
                 <CardContent className="p-12 text-center">
                   <p className="text-zinc-500">
-                    No media yet. Upload your first photo or video to get started.
+                    {searchQuery.trim() !== '' 
+                      ? `No results found for "${searchQuery}"`
+                      : 'No media yet. Upload your first photo or video to get started.'}
                   </p>
                 </CardContent>
               </Card>
             </div>
           ) : (
-            filteredItems.map(item => (
+            paginatedItems.map(item => (
               <GalleryCard 
                 key={item.id} 
                 item={item}
@@ -83,6 +230,16 @@ export default function GalleryPage() {
             ))
           )}
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={searchedItems.length}
+          onItemsPerPageChange={setItemsPerPage}
+          itemsPerPageOptions={[6, 12, 24, 48]}
+        />
 
         {showAddModal && (
           <AddMediaModal onClose={() => setShowAddModal(false)} />
@@ -112,8 +269,22 @@ function GalleryCard({ item, onClick }: { item: GalleryItem; onClick: () => void
           className="w-full h-full object-cover"
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center bg-zinc-300">
-          <Play className="w-16 h-16" />
+        <div className="relative w-full h-full">
+          <img 
+            src={item.thumbnailUrl} 
+            alt={item.title}
+            className="w-full h-full object-cover"
+          />
+          {/* YouTube-style play button overlay */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="bg-black/70 rounded-full p-4 group-hover:bg-red-600 transition-colors">
+              <Play className="w-12 h-12 text-white fill-white" />
+            </div>
+          </div>
+          {/* Video duration badge (optional) */}
+          <div className="absolute bottom-2 right-2 bg-black/80 text-white text-xs px-2 py-1 rounded">
+            Video
+          </div>
         </div>
       )}
       
