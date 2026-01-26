@@ -59,8 +59,14 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h- bg-white flex items-center justify-center p-14">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
+      
+      {/* Blurry Circular Background - Oxford Blue */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#002147] rounded-full blur-[120px] opacity-20 pointer-events-none" />
+      
+      <div className="w-full max-w-md relative z-10">
         {/* Logo and Title */}
         <div className="text-center mb-4">
           <div className="flex justify-center mb-4">
