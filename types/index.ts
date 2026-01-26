@@ -22,6 +22,10 @@ export interface SabbathAttendance {
   memberId: string;
   family: Family;
   date: Date;
+  isPresent: boolean; // Whether member was present
+  hasReason?: boolean; // Whether there's a reason for absence
+  hasNoReason?: boolean; // Whether there's no reason for absence
+  isSick?: boolean; // Whether absence was due to sickness
   attendedSabbath: boolean;
   attendedStartingSabbath: boolean;
   studiedBible: number; // 0-7 days

@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Pagination } from '@/components/Pagination';
-import { Calendar as CalendarIcon, Save } from 'lucide-react';
+import { Calendar as CalendarIcon, Save, AlertCircle } from 'lucide-react';
 import { format } from 'date-fns';
 
 export default function SabbathReportPage() {
@@ -209,6 +209,10 @@ function AttendanceForm({
   recordedBy: string;
 }) {
   const [formData, setFormData] = useState({
+    isPresent: true,
+    hasReason: false,
+    hasNoReason: false,
+    isSick: false,
     attendedSabbath: false,
     attendedStartingSabbath: false,
     studiedBible: false,
@@ -223,7 +227,17 @@ function AttendanceForm({
       memberId: member.id,
       family: member.family,
       date: new Date(date),
-      ...formData,
+      isPresent: formData.isPresent,
+      hasReason: !formData.isPresent ? formData.hasReason : undefined,
+      hasNoReason: !formData.isPresent ? formData.hasNoReason : undefined,
+      isSick: !formData.isPresent ? formData.isSick : undefined,
+      attendedSabbath: formData.attendedSabbath,
+      attendedStartingSabbath: formData.attendedStartingSabbath,
+      studiedBible: formData.studiedBible,
+      visitedPeople: formData.visitedPeople,
+      wasVisited: formData.wasVisited,
+      helpedPeople: formData.helpedPeople,
+      wasHelped: formData.wasHelped,
       recordedBy,
       createdAt: new Date(),
     };
@@ -238,6 +252,76 @@ function AttendanceForm({
         <CardTitle className="uppercase">{member.name}</CardTitle>
       </CardHeader>
       <CardContent>
+        {/* Presence Check */}
+        <div className="mb-6 p-4 bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <label className="flex items-center gap-2 cursor-pointer font-bold text-lg">
+            <input
+              type="checkbox"
+              checked={formData.isPresent}
+              onChange={e => setFormData({ 
+                ...formData, 
+                isPresent: e.target.checked,
+                hasReason: e.target.checked ? false : formData.hasReason,
+                hasNoReason: e.target.checked ? false : formData.hasNoReason,
+                isSick: e.target.checked ? false : formData.isSick,
+              })}
+              className="w-6 h-6 border-4 border-black"
+            />
+            <span>Present</span>
+          </label>
+        </div>
+
+        {/* Absence Fields - Only show if not present */}
+        {!formData.isPresent && (
+          <div className="mb-6 p-4 bg-red-50 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] space-y-4">
+            <div className="flex items-center gap-2 text-red-700 font-black">
+              <AlertCircle className="w-5 h-5" />
+              <span>Member Absent</span>
+            </div>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              <label className="flex items-center gap-2 cursor-pointer font-bold">
+                <input
+                  type="checkbox"
+                  checked={formData.hasReason}
+                  onChange={e => setFormData({ 
+                    ...formData, 
+                    hasReason: e.target.checked,
+                    hasNoReason: e.target.checked ? false : formData.hasNoReason
+                  })}
+                  className="w-5 h-5 border-4 border-black"
+                />
+                <span>Has Reason</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer font-bold">
+                <input
+                  type="checkbox"
+                  checked={formData.hasNoReason}
+                  onChange={e => setFormData({ 
+                    ...formData, 
+                    hasNoReason: e.target.checked,
+                    hasReason: e.target.checked ? false : formData.hasReason
+                  })}
+                  className="w-5 h-5 border-4 border-black"
+                />
+                <span>Has No Reason</span>
+              </label>
+
+              <label className="flex items-center gap-2 cursor-pointer font-bold">
+                <input
+                  type="checkbox"
+                  checked={formData.isSick}
+                  onChange={e => setFormData({ ...formData, isSick: e.target.checked })}
+                  className="w-5 h-5 border-4 border-black"
+                />
+                <span>Due to Sickness</span>
+              </label>
+            </div>
+          </div>
+        )}
+
+        {/* Activity Checkboxes - Always visible */}
         <div className="grid md:grid-cols-2 gap-4">
           <label className="flex items-center gap-2 cursor-pointer font-bold">
             <input
