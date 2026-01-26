@@ -9,10 +9,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Upload, Image as ImageIcon, Video, Play, CalendarIcon } from 'lucide-react';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { format } from 'date-fns';
+import { Upload, Image as ImageIcon, Video, Play } from 'lucide-react';
+import { DateSearchFilter } from '@/components/DateSearchFilter';
 
 export default function GalleryPage() {
   const [filter, setFilter] = useState<MediaType | 'All'>('All');
@@ -185,45 +183,13 @@ export default function GalleryPage() {
             </Button>
           </div>
           
-          {/* Date Picker */}
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" className="w-[240px] justify-start text-left font-bold">
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {dateFilter ? format(dateFilter, 'PPP') : <span className="font-black uppercase tracking-tight border-2 border-black bg-yellow-300 px-2 py-0.5 shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transform -rotate-1">Pick a date</span>}
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={dateFilter}
-                onSelect={setDateFilter}
-                initialFocus
-              />
-              {dateFilter && (
-                <div className="p-3 border-t">
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => setDateFilter(undefined)}
-                  >
-                    Clear Date
-                  </Button>
-                </div>
-              )}
-            </PopoverContent>
-          </Popover>
-          
-          {/* Search Bar */}
-          <div className="flex-1 min-w-[250px] max-w-md">
-            <Input
-              type="text"
-              placeholder="Search gallery..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full"
-            />
-          </div>
+          <DateSearchFilter
+            dateFilter={dateFilter}
+            onDateChange={setDateFilter}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            searchPlaceholder="Search gallery..."
+          />
         </div>
 
         {/* Gallery Grid */}
