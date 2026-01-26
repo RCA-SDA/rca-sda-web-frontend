@@ -12,6 +12,7 @@ export interface Member {
   status: Status;
   family: Family;
   role: Role;
+  profilePicture?: string;
   createdAt: Date;
 }
 

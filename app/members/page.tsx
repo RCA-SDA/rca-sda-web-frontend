@@ -9,18 +9,173 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { UserPlus, Mail, GraduationCap, Users as UsersIcon } from 'lucide-react';
+import { UserPlus, Mail, GraduationCap, Users as UsersIcon, User, Search, Upload, X } from 'lucide-react';
+import Image from 'next/image';
+import { Pagination } from '@/components/Pagination';
 
 export default function MembersPage() {
   const [selectedFamily, setSelectedFamily] = useState<Family | 'All'>('All');
   const [showAddModal, setShowAddModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(9);
 
   // Mock data - replace with actual API calls
-  const members: Member[] = [];
+  const members: Member[] = [
+    {
+      id: '1',
+      name: 'John Mensah',
+      email: 'john.mensah@example.com',
+      level: 'Y3',
+      status: 'Current Student',
+      family: 'Salvation Siblings',
+      role: 'Father',
+      createdAt: new Date('2024-01-15'),
+    },
+    {
+      id: '2',
+      name: 'Grace Osei',
+      email: 'grace.osei@example.com',
+      level: 'Y2',
+      status: 'Current Student',
+      family: 'Salvation Siblings',
+      role: 'Mother',
+      profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-02-10'),
+    },
+    {
+      id: '3',
+      name: 'Emmanuel Boateng',
+      email: 'emmanuel.b@example.com',
+      level: 'Y1',
+      status: 'Current Student',
+      family: 'Salvation Siblings',
+      role: 'Member',
+      createdAt: new Date('2024-03-05'),
+    },
+    {
+      id: '4',
+      name: 'Sarah Agyeman',
+      email: 'sarah.agyeman@example.com',
+      level: 'Y2',
+      status: 'Current Student',
+      family: 'Salvation Siblings',
+      role: 'Member',
+      profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-01-20'),
+    },
+    {
+      id: '5',
+      name: 'David Owusu',
+      email: 'david.owusu@example.com',
+      level: 'Y3',
+      status: 'Alumni/Graduated',
+      family: 'Ebenezer',
+      role: 'Father',
+      createdAt: new Date('2023-09-01'),
+    },
+    {
+      id: '6',
+      name: 'Abigail Asante',
+      email: 'abigail.asante@example.com',
+      level: 'Y3',
+      status: 'Current Student',
+      family: 'Ebenezer',
+      role: 'Mother',
+      profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-01-10'),
+    },
+    {
+      id: '7',
+      name: 'Michael Adjei',
+      email: 'michael.adjei@example.com',
+      level: 'Y1',
+      status: 'Current Student',
+      family: 'Ebenezer',
+      role: 'Member',
+      profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-04-12'),
+    },
+    {
+      id: '8',
+      name: 'Esther Frimpong',
+      email: 'esther.frimpong@example.com',
+      level: 'Y2',
+      status: 'Current Student',
+      family: 'Ebenezer',
+      role: 'Choir Secretary',
+      // profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-02-28'),
+    },
+    {
+      id: '9',
+      name: 'Samuel Appiah',
+      email: 'samuel.appiah@example.com',
+      level: 'Y3',
+      status: 'Current Student',
+      family: 'Jehova-nissi',
+      role: 'Father',
+      createdAt: new Date('2024-01-05'),
+    },
+    {
+      id: '10',
+      name: 'Rebecca Amoah',
+      email: 'rebecca.amoah@example.com',
+      level: 'Y2',
+      status: 'Current Student',
+      family: 'Jehova-nissi',
+      role: 'Mother',
+      profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-02-15'),
+    },
+    {
+      id: '11',
+      name: 'Joseph Antwi',
+      email: 'joseph.antwi@example.com',
+      level: 'Y1',
+      status: 'Current Student',
+      family: 'Jehova-nissi',
+      role: 'Member',
+      profilePicture: 'https://i.pravatar.cc/300?img=33',
+      createdAt: new Date('2024-03-20'),
+    },
+    {
+      id: '12',
+      name: 'Ruth Darko',
+      email: 'ruth.darko@example.com',
+      level: 'Y2',
+      status: 'Alumni/Graduated',
+      family: 'Jehova-nissi',
+      role: 'Leader',
+      createdAt: new Date('2023-08-15'),
+    },
+  ];
 
-  const filteredMembers = selectedFamily === 'All' 
-    ? members 
-    : members.filter(m => m.family === selectedFamily);
+  const filteredMembers = members
+    .filter(m => selectedFamily === 'All' || m.family === selectedFamily)
+    .filter(m => 
+      searchQuery === '' || 
+      m.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      m.role.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+  // Pagination calculations
+  const totalPages = Math.ceil(filteredMembers.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedMembers = filteredMembers.slice(startIndex, endIndex);
+
+  // Reset to page 1 when filters change
+  const handleFamilyChange = (family: Family | 'All') => {
+    setSelectedFamily(family);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
@@ -35,11 +190,25 @@ export default function MembersPage() {
           </Button>
         </div>
 
+        {/* Search Bar */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-zinc-500" />
+            <Input
+              type="text"
+              placeholder="Search by name, email, or role..."
+              value={searchQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+        </div>
+
         {/* Family Filter */}
         <div className="flex gap-4 mb-8 overflow-x-auto pb-2">
           <Button
             variant={selectedFamily === 'All' ? 'default' : 'outline'}
-            onClick={() => setSelectedFamily('All')}
+            onClick={() => handleFamilyChange('All')}
           >
             All Families
           </Button>
@@ -47,7 +216,7 @@ export default function MembersPage() {
             <Button
               key={family}
               variant={selectedFamily === family ? 'default' : 'outline'}
-              onClick={() => setSelectedFamily(family)}
+              onClick={() => handleFamilyChange(family)}
             >
               {family}
             </Button>
@@ -61,11 +230,24 @@ export default function MembersPage() {
               No members found. Add your first member to get started.
             </div>
           ) : (
-            filteredMembers.map(member => (
+            paginatedMembers.map(member => (
               <MemberCard key={member.id} member={member} />
             ))
           )}
         </div>
+
+        {/* Pagination */}
+        {filteredMembers.length > 0 && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+            itemsPerPage={itemsPerPage}
+            totalItems={filteredMembers.length}
+            onItemsPerPageChange={setItemsPerPage}
+            itemsPerPageOptions={[6, 9, 12, 24]}
+          />
+        )}
 
         {/* Add Member Modal */}
         {showAddModal && (
@@ -84,15 +266,32 @@ function MemberCard({ member }: { member: Member }) {
   };
 
   return (
-    <Card className={`${familyColors[member.family]}`}>
+    <Card className={`${familyColors[member.family]} overflow-hidden`}>
+      <div className="relative w-full h-64 bg-white border-b-4 border-black">
+        {member.profilePicture ? (
+          <Image
+            src={member.profilePicture}
+            alt={member.name}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-yellow-300 to-pink-300 border-b-4 border-black">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full bg-white border-4 border-black  flex items-center justify-center">
+                <User className="w-16 h-16 text-black" strokeWidth={3} />
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
       <CardHeader>
-        <CardTitle className="text-lg uppercase flex items-center gap-2">
-          <UsersIcon className="w-5 h-5" />
+        <CardTitle className="text-xl uppercase">
           {member.name}
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="space-y-1 text-sm font-bold">
+        <div className="space-y-2 text-sm font-bold">
           <p className="flex items-center gap-2">
             <Mail className="w-4 h-4" />
             {member.email}
@@ -119,11 +318,30 @@ function AddMemberModal({ onClose }: { onClose: () => void }) {
     family: 'Salvation Siblings' as Family,
     role: 'Member',
   });
+  const [profileImage, setProfileImage] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProfileImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setProfileImage(null);
+    setImageFile(null);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add API call here
-    console.log('Adding member:', formData);
+    // Add API call here with imageFile
+    console.log('Adding member:', formData, imageFile);
     onClose();
   };
 
@@ -135,6 +353,49 @@ function AddMemberModal({ onClose }: { onClose: () => void }) {
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4">
+          {/* Profile Picture Upload */}
+          <div className="space-y-2">
+            <Label>Profile Picture</Label>
+            <div className="flex flex-col items-center gap-4">
+              {profileImage ? (
+                <div className="relative">
+                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                    <Image
+                      src={profileImage}
+                      alt="Profile preview"
+                      width={128}
+                      height={128}
+                      className="object-cover w-full h-full"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={removeImage}
+                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 border-2 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:bg-red-600"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-yellow-300 to-pink-300 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
+                  <User className="w-16 h-16 text-black" strokeWidth={3} />
+                </div>
+              )}
+              <label className="cursor-pointer">
+                <div className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-bold">
+                  <Upload className="w-4 h-4" />
+                  Upload Photo
+                </div>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+              </label>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <Label htmlFor="name">Name</Label>
             <Input
