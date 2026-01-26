@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, Users, Calendar, FileText, Music, BookOpen, Image, Heart, Library } from 'lucide-react';
+import { Menu, X, Users, Calendar, FileText, Music, BookOpen, Image, Heart, Library, LogIn } from 'lucide-react';
 import NextImage from 'next/image';
 
 export default function Navbar() {
@@ -86,6 +86,19 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            
+            {/* Login Button */}
+            <Link
+              href="/login"
+              className={`flex items-center gap-2 font-black uppercase text-sm px-4 py-2 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all ${
+                isActive('/login')
+                  ? 'bg-green-400 text-black'
+                  : 'bg-white text-black'
+              }`}
+            >
+              <LogIn className="w-4 h-4" />
+              Login
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -125,6 +138,20 @@ export default function Navbar() {
                 {label}
               </Link>
             ))}
+            
+            {/* Login Button Mobile */}
+            <Link
+              href="/login"
+              className={`flex items-center gap-2 px-3 py-2 font-black uppercase text-sm border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] ${
+                isActive('/login')
+                  ? 'bg-green-400 text-black'
+                  : 'bg-white text-black'
+              }`}
+              onClick={() => setIsOpen(false)}
+            >
+              <LogIn className="w-5 h-5" />
+              Login
+            </Link>
           </div>
         </div>
       )}
