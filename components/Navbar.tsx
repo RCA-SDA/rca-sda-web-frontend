@@ -20,6 +20,11 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Hide navbar on user portal pages
+  if (pathname.startsWith('/users/')) {
+    return null;
+  }
+
   const isActive = (path: string) => {
     if (path === '/') return pathname === '/';
     return pathname.startsWith(path);
@@ -27,7 +32,6 @@ export default function Navbar() {
 
   const navLinks = [
     { href: '/members', label: 'Members', icon: Users },
-    { href: '/sabbath-report', label: 'Sabbath', icon: Calendar },
     { href: '/committee', label: 'Committee', icon: FileText },
     { href: '/choir', label: 'Choir', icon: Music },
     { href: '/blog', label: 'Blog', icon: BookOpen },

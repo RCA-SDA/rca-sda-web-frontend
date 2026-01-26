@@ -1,34 +1,61 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+// Dummy credentials for testing
+const DUMMY_CREDENTIALS = {
+  father: {
+    email: 'father@rcasda.com',
+    password: 'father123',
+    redirect: '/users/father'
+  },
+  admin: {
+    email: 'admin@rcasda.com',
+    password: 'admin123',
+    redirect: '/'
+  }
+};
+
 export default function LoginPage() {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
 
-    // Add authentication logic here
-    console.log('Login attempt:', formData);
+    // Check dummy credentials
+    const credentials = Object.values(DUMMY_CREDENTIALS).find(
+      cred => cred.email === formData.email && cred.password === formData.password
+    );
 
     // Simulate API call
     setTimeout(() => {
-      setIsLoading(false);
-      // Redirect to dashboard or home page
-    }, 1000);
+      if (credentials) {
+        // Successful login
+        console.log('Login successful:', formData.email);
+        router.push(credentials.redirect);
+      } else {
+        // Failed login
+        setError('Invalid email or password');
+        setIsLoading(false);
+      }
+    }, 800);
   };
 
   return (
@@ -54,8 +81,18 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <Card className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-     
-          <CardContent className="pt-6">
+    
+          <CardContent className="">
+           
+
+            {/* Error Message */}
+            {error && (
+              <div className="mb-4 p-3 bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
+                <AlertCircle className="w-5 h-5 text-red-600" />
+                <p className="font-bold text-red-800">{error}</p>
+              </div>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Email Field */}
               <div className="space-y-2">
