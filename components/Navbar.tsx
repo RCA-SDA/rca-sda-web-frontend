@@ -36,7 +36,7 @@ export default function Navbar() {
 
   return (
     <nav 
-      className={`border-b-4 border-black sticky top-0 z-50 transition-all duration-300 ${
+      className={`border-b-3 border-black sticky top-0 z-50 transition-all duration-300 ${
         isScrolled 
           ? 'bg-white/80 backdrop-blur-md shadow-[0px_4px_0px_0px_rgba(0,0,0,1)]' 
           : 'bg-white'

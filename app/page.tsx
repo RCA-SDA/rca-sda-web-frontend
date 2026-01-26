@@ -5,12 +5,15 @@ import { Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#fafafa] relative">
+    <div className="min-h-screen bg-[#fafafa] relative overflow-hidden">
       {/* Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
       
+      {/* Blurry Circular Background - Oxford Blue */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#002147] rounded-full blur-[120px] opacity-20 pointer-events-none" />
+      
       {/* Hero Section */}
-      <section className=" text-black py-20 border-b-4 border-black relative">
+      <section className=" text-black py-20  relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-6xl font-black mb-6 uppercase tracking-tight transform -rotate-1">Welcome to RCA-SDA</h1>
           <p className="text-xl mb-8 max-w-2xl mx-auto font-bold">
@@ -91,7 +94,7 @@ export default function Home() {
       </section>
 
       {/* Church Families Section */}
-      <section className="py-16 border-y-4 border-black relative">
+      <section className="py-16 relative">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-4xl font-black text-center mb-12 uppercase transform rotate-1">
             Our Church Families
