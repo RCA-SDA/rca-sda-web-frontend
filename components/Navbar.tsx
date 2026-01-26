@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import { Menu, X, Users, Calendar, FileText, Music, BookOpen, Image, Heart } from 'lucide-react';
+import { Menu, X, Users, Calendar, FileText, Music, BookOpen, Image, Heart, Library } from 'lucide-react';
 import NextImage from 'next/image';
 
 export default function Navbar() {
@@ -33,6 +33,7 @@ export default function Navbar() {
     { href: '/blog', label: 'Blog', icon: BookOpen },
     { href: '/gallery', label: 'Gallery', icon: Image },
     { href: '/testimonies', label: 'Testimonies', icon: Heart },
+    { href: '/resources', label: 'Resources', icon: Library },
   ];
 
   return (

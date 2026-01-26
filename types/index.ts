@@ -94,3 +94,19 @@ export interface Testimony {
   isApproved: boolean;
   createdAt: Date;
 }
+
+// Resource Types
+export type ResourceCategory = 'Spiritual Growth' | 'Bible Study' | 'Youth' | 'Family' | 'Health' | 'Prophecy';
+
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  category: ResourceCategory;
+  coverImageUrl?: string;
+  pdfUrl?: string;
+  externalUrl?: string;
+  uploadedBy: string;
+  createdAt: Date;
+}
