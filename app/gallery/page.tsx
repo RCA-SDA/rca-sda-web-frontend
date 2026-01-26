@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Upload, Image as ImageIcon, Video, Play } from 'lucide-react';
 import { DateSearchFilter } from '@/components/DateSearchFilter';
+import { Pagination } from '@/components/Pagination';
 
 export default function GalleryPage() {
   const [filter, setFilter] = useState<MediaType | 'All'>('All');
@@ -18,6 +19,8 @@ export default function GalleryPage() {
   const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(6);
   
   // Mock data - replace with API call
   const galleryItems: GalleryItem[] = [
@@ -144,6 +147,17 @@ export default function GalleryPage() {
         item.description?.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
+  // Pagination
+  const totalPages = Math.ceil(searchedItems.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedItems = searchedItems.slice(startIndex, startIndex + itemsPerPage);
+
+  // Reset to page 1 when filters change
+  const handleFilterChange = (filterFn: () => void) => {
+    filterFn();
+    setCurrentPage(1);
+  };
+
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,21 +176,21 @@ export default function GalleryPage() {
           <div className="flex gap-4">
             <Button
               variant={filter === 'All' ? 'default' : 'outline'}
-              onClick={() => setFilter('All')}
+              onClick={() => handleFilterChange(() => setFilter('All'))}
             >
               <ImageIcon className="w-4 h-4 mr-2" />
               All
             </Button>
             <Button
               variant={filter === 'image' ? 'default' : 'outline'}
-              onClick={() => setFilter('image')}
+              onClick={() => handleFilterChange(() => setFilter('image'))}
             >
               <ImageIcon className="w-4 h-4 mr-2" />
               Photos
             </Button>
             <Button
               variant={filter === 'video' ? 'default' : 'outline'}
-              onClick={() => setFilter('video')}
+              onClick={() => handleFilterChange(() => setFilter('video'))}
             >
               <Video className="w-4 h-4 mr-2" />
               Videos
@@ -185,9 +199,9 @@ export default function GalleryPage() {
           
           <DateSearchFilter
             dateFilter={dateFilter}
-            onDateChange={setDateFilter}
+            onDateChange={(date) => handleFilterChange(() => setDateFilter(date))}
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
+            onSearchChange={(query) => handleFilterChange(() => setSearchQuery(query))}
             searchPlaceholder="Search gallery..."
           />
         </div>
@@ -207,7 +221,7 @@ export default function GalleryPage() {
               </Card>
             </div>
           ) : (
-            searchedItems.map(item => (
+            paginatedItems.map(item => (
               <GalleryCard 
                 key={item.id} 
                 item={item}
@@ -216,6 +230,16 @@ export default function GalleryPage() {
             ))
           )}
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={searchedItems.length}
+          onItemsPerPageChange={setItemsPerPage}
+          itemsPerPageOptions={[6, 12, 24, 48]}
+        />
 
         {showAddModal && (
           <AddMediaModal onClose={() => setShowAddModal(false)} />

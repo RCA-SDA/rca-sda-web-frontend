@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { PenSquare, ArrowRight } from 'lucide-react';
 import { DateSearchFilter } from '@/components/DateSearchFilter';
+import { Pagination } from '@/components/Pagination';
 
 export default function BlogPage() {
   const [selectedCategory, setSelectedCategory] = useState<BlogCategory | 'All'>('All');
@@ -19,6 +20,8 @@ export default function BlogPage() {
   const [selectedBlog, setSelectedBlog] = useState<Blog | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(3);
   
   // Mock data - replace with API call
   const blogs: Blog[] = [
@@ -116,6 +119,17 @@ export default function BlogPage() {
         blog.author.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
+  // Pagination
+  const totalPages = Math.ceil(searchedBlogs.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedBlogs = searchedBlogs.slice(startIndex, startIndex + itemsPerPage);
+
+  // Reset to page 1 when filters change
+  const handleFilterChange = (filterFn: () => void) => {
+    filterFn();
+    setCurrentPage(1);
+  };
+
   const categories: BlogCategory[] = ['Church News', 'Word of God', 'Events'];
 
   return (
@@ -138,7 +152,7 @@ export default function BlogPage() {
           <div className="flex gap-4">
             <Button
               variant={selectedCategory === 'All' ? 'default' : 'outline'}
-              onClick={() => setSelectedCategory('All')}
+              onClick={() => handleFilterChange(() => setSelectedCategory('All'))}
             >
               All Posts
             </Button>
@@ -146,7 +160,7 @@ export default function BlogPage() {
               <Button
                 key={category}
                 variant={selectedCategory === category ? 'default' : 'outline'}
-                onClick={() => setSelectedCategory(category)}
+                onClick={() => handleFilterChange(() => setSelectedCategory(category))}
               >
                 {category}
               </Button>
@@ -155,9 +169,9 @@ export default function BlogPage() {
 
           <DateSearchFilter
             dateFilter={dateFilter}
-            onDateChange={setDateFilter}
+            onDateChange={(date) => handleFilterChange(() => setDateFilter(date))}
             searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
+            onSearchChange={(query) => handleFilterChange(() => setSearchQuery(query))}
             searchPlaceholder="Search blog posts..."
           />
         </div>
@@ -175,7 +189,7 @@ export default function BlogPage() {
               </CardContent>
             </Card>
           ) : (
-            searchedBlogs.map(blog => (
+            paginatedBlogs.map(blog => (
               <BlogCard 
                 key={blog.id} 
                 blog={blog} 
@@ -184,6 +198,16 @@ export default function BlogPage() {
             ))
           )}
         </div>
+
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={searchedBlogs.length}
+          onItemsPerPageChange={setItemsPerPage}
+          itemsPerPageOptions={[3, 6, 12, 24]}
+        />
 
         {showAddModal && (
           <AddBlogModal onClose={() => setShowAddModal(false)} />
