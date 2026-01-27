@@ -18,8 +18,24 @@ import {
   Search
 } from 'lucide-react';
 
+type FamilyMember = {
+  id: string;
+  name: string;
+  role: string;
+  email: string;
+  phone: string;
+  dateOfBirth: string;
+  address: string;
+  status: string;
+  baptismDate: string | null;
+};
+
 // Mock data - replace with actual API calls
-const mockFamilyData = {
+const mockFamilyData: {
+  familyName: string;
+  father: FamilyMember;
+  members: FamilyMember[];
+} = {
   familyName: 'Salvation Siblings',
   father: {
     id: '1',
@@ -40,6 +56,7 @@ const mockFamilyData = {
       email: 'sarah.smith@example.com',
       phone: '+250 788 123 457',
       dateOfBirth: '1982-08-22',
+      address: 'Kigali, Rwanda',
       status: 'active',
       baptismDate: '2010-03-20',
     },
@@ -50,6 +67,7 @@ const mockFamilyData = {
       email: 'david.smith@example.com',
       phone: '+250 788 123 458',
       dateOfBirth: '2005-11-10',
+      address: 'Kigali, Rwanda',
       status: 'active',
       baptismDate: '2020-06-15',
     },
@@ -60,6 +78,7 @@ const mockFamilyData = {
       email: '',
       phone: '',
       dateOfBirth: '2012-03-05',
+      address: 'Kigali, Rwanda',
       status: 'active',
       baptismDate: null,
     },
@@ -67,7 +86,7 @@ const mockFamilyData = {
 };
 
 export default function FamilyPage() {
-  const [selectedMember, setSelectedMember] = useState<typeof mockFamilyData.father | null>(null);
+  const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(6);
