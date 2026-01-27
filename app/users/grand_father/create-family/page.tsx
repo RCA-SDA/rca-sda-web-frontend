@@ -1,36 +1,78 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   FolderPlus,
   User,
-  Mail,
-  Phone,
-  Calendar,
-  MapPin,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
 
+interface Member {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  gender: string;
+}
+
 export default function CreateFamilyPage() {
   const [formData, setFormData] = useState({
     familyName: '',
-    fatherName: '',
-    fatherEmail: '',
-    fatherPhone: '',
-    fatherDOB: '',
-    address: '',
+    fatherId: '',
+    motherId: '',
   });
 
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
+  // Fetch members list
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        setIsLoadingMembers(true);
+        // Simulate API call - replace with actual API endpoint
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Mock data - replace with actual API response
+        const mockMembers: Member[] = [
+          { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+250 788 111 111', gender: 'male' },
+          { id: '2', name: 'Michael Smith', email: 'michael@example.com', phone: '+250 788 222 222', gender: 'male' },
+          { id: '3', name: 'David Johnson', email: 'david@example.com', phone: '+250 788 333 333', gender: 'male' },
+          { id: '4', name: 'Robert Brown', email: 'robert@example.com', phone: '+250 788 444 444', gender: 'male' },
+          { id: '5', name: 'Jane Doe', email: 'jane@example.com', phone: '+250 788 555 555', gender: 'female' },
+          { id: '6', name: 'Sarah Smith', email: 'sarah@example.com', phone: '+250 788 666 666', gender: 'female' },
+          { id: '7', name: 'Emily Johnson', email: 'emily@example.com', phone: '+250 788 777 777', gender: 'female' },
+          { id: '8', name: 'Mary Brown', email: 'mary@example.com', phone: '+250 788 888 888', gender: 'female' },
+        ];
+        
+        setMembers(mockMembers);
+      } catch (error) {
+        console.error('Error fetching members:', error);
+      } finally {
+        setIsLoadingMembers(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSelectChange = (name: string, value: string) => {
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -54,11 +96,8 @@ export default function CreateFamilyPage() {
       setTimeout(() => {
         setFormData({
           familyName: '',
-          fatherName: '',
-          fatherEmail: '',
-          fatherPhone: '',
-          fatherDOB: '',
-          address: '',
+          fatherId: '',
+          motherId: '',
         });
         setSubmitStatus('idle');
       }, 3000);
@@ -141,95 +180,78 @@ export default function CreateFamilyPage() {
                   Father Information
                 </h3>
 
-                <div className="space-y-4">
-                  {/* Father Name */}
-                  <div className="space-y-2">
-                    <Label htmlFor="fatherName" className="text-sm font-black uppercase">
-                      Father's Full Name *
-                    </Label>
-                    <Input
-                      id="fatherName"
-                      name="fatherName"
-                      type="text"
-                      required
-                      value={formData.fatherName}
-                      onChange={handleInputChange}
-                      placeholder="e.g., John Smith"
-                      className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="fatherId" className="text-sm font-black uppercase">
+                    Select Father from Members *
+                  </Label>
+                  <Select
+                    value={formData.fatherId}
+                    onValueChange={(value) => handleSelectChange('fatherId', value)}
+                    required
+                  >
+                    <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                      <SelectValue placeholder={isLoadingMembers ? "Loading members..." : "Select a father"} />
+                    </SelectTrigger>
+                    <SelectContent className="border-4 border-black">
+                      {isLoadingMembers ? (
+                        <SelectItem value="loading" disabled>Loading members...</SelectItem>
+                      ) : members.length === 0 ? (
+                        <SelectItem value="no-members" disabled>No members available</SelectItem>
+                      ) : (
+                        members.map((member) => (
+                          <SelectItem key={member.id} value={member.id} className="font-bold">
+                            {member.name} - {member.email}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {formData.fatherId && (
+                    <p className="text-sm font-bold text-gray-600 mt-2">
+                      Selected: {members.find(m => m.id === formData.fatherId)?.name}
+                    </p>
+                  )}
+                </div>
+              </div>
 
-                  {/* Email and Phone */}
-                  <div className="grid md:grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="fatherEmail" className="text-sm font-black uppercase flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Email *
-                      </Label>
-                      <Input
-                        id="fatherEmail"
-                        name="fatherEmail"
-                        type="email"
-                        required
-                        value={formData.fatherEmail}
-                        onChange={handleInputChange}
-                        placeholder="father@example.com"
-                        className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                      />
-                    </div>
+              {/* Mother Information Section */}
+              <div className="pt-6 border-t-4 border-black">
+                <h3 className="text-xl font-black uppercase mb-4 flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Mother Information
+                </h3>
 
-                    <div className="space-y-2">
-                      <Label htmlFor="fatherPhone" className="text-sm font-black uppercase flex items-center gap-2">
-                        <Phone className="w-4 h-4" />
-                        Phone *
-                      </Label>
-                      <Input
-                        id="fatherPhone"
-                        name="fatherPhone"
-                        type="tel"
-                        required
-                        value={formData.fatherPhone}
-                        onChange={handleInputChange}
-                        placeholder="+250 788 123 456"
-                        className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Date of Birth */}
-                  <div className="space-y-2">
-                    <Label htmlFor="fatherDOB" className="text-sm font-black uppercase flex items-center gap-2">
-                      <Calendar className="w-4 h-4" />
-                      Date of Birth *
-                    </Label>
-                    <Input
-                      id="fatherDOB"
-                      name="fatherDOB"
-                      type="date"
-                      required
-                      value={formData.fatherDOB}
-                      onChange={handleInputChange}
-                      className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                    />
-                  </div>
-
-                  {/* Address */}
-                  <div className="space-y-2">
-                    <Label htmlFor="address" className="text-sm font-black uppercase flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      Address *
-                    </Label>
-                    <Input
-                      id="address"
-                      name="address"
-                      type="text"
-                      required
-                      value={formData.address}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Kigali, Rwanda"
-                      className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="motherId" className="text-sm font-black uppercase">
+                    Select Mother from Members *
+                  </Label>
+                  <Select
+                    value={formData.motherId}
+                    onValueChange={(value) => handleSelectChange('motherId', value)}
+                    required
+                  >
+                    <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                      <SelectValue placeholder={isLoadingMembers ? "Loading members..." : "Select a mother"} />
+                    </SelectTrigger>
+                    <SelectContent className="border-4 border-black">
+                      {isLoadingMembers ? (
+                        <SelectItem value="loading" disabled>Loading members...</SelectItem>
+                      ) : members.length === 0 ? (
+                        <SelectItem value="no-members" disabled>No members available</SelectItem>
+                      ) : (
+                        members.map((member) => (
+                          <SelectItem key={member.id} value={member.id} className="font-bold">
+                            {member.name} - {member.email}
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                  {formData.motherId && (
+                    <p className="text-sm font-bold text-gray-600 mt-2">
+                      Selected: {members.find(m => m.id === formData.motherId)?.name}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -265,7 +287,7 @@ export default function CreateFamilyPage() {
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-purple-600">•</span>
-                <span>Father will receive login credentials via email</span>
+                <span>Both parents will receive login credentials via email</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-purple-600">•</span>
