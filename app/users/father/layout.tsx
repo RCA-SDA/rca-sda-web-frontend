@@ -40,8 +40,8 @@ export default function FatherLayout({
   const navLinks = [
     { href: '/users/father', label: 'Dashboard', icon: Home },
     { href: '/users/father/family', label: 'My Family', icon: Users },
-    { href: '/saers/father/sabbath-report', label: 'Sabbath Report', icon: Calendar },
-    { href: '/users/father/attendance', label: 'Attendance', icon: Calendar },
+    { href: '/users/father/sabbath-report', label: 'Sabbath Report', icon: Calendar },
+    { href: '/users/father/history', label: 'History', icon: Calendar },
   ];
 
   return (
