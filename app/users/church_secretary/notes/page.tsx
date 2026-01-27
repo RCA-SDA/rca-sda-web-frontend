@@ -298,11 +298,6 @@ Closing Prayer: Brother Paul closed in prayer.`,
     currentPage * itemsPerPage
   );
 
-  const handleSearchChange = (value: string) => {
-    setSearchQuery(value);
-    setCurrentPage(1);
-  };
-
   const getTypeColor = (type: string) => {
     switch (type) {
       case 'Board Meeting':
@@ -333,67 +328,43 @@ Closing Prayer: Brother Paul closed in prayer.`,
         </div>
 
         {/* Filters */}
-        <Card className="mb-6 bg-orange-200">
-          <CardHeader>
-            <CardTitle className="uppercase flex items-center gap-2">
-              <Filter className="w-5 h-5" />
-              Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Search */}
-              <div>
-                <Label htmlFor="search" className="font-bold mb-2 block">
-                  Search Notes
-                </Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                  <Input
-                    id="search"
-                    type="text"
-                    placeholder="Search by title, type, or location..."
-                    value={searchQuery}
-                    onChange={(e) => handleSearchChange(e.target.value)}
-                    className="pl-10 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                  />
-                  {searchQuery && (
-                    <button
-                      onClick={() => handleSearchChange('')}
-                      className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-600 hover:text-black"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  )}
-                </div>
-              </div>
+        <div className="mb-6 flex flex-wrap gap-4 items-center">
+          <DateSearchFilter
+            dateFilter={dateFilter}
+            onDateChange={(date) => {
+              setDateFilter(date);
+              setCurrentPage(1);
+            }}
+            searchQuery={searchQuery}
+            onSearchChange={(query) => {
+              setSearchQuery(query);
+              setCurrentPage(1);
+            }}
+            searchPlaceholder="Search by title, type, or location..."
+          />
 
-              {/* Type Filter */}
-              <div>
-                <Label htmlFor="type" className="font-bold mb-2 block">
-                  Meeting Type
-                </Label>
-                <Select value={filterType} onValueChange={setFilterType}>
-                  <SelectTrigger className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
-                    <SelectValue placeholder="All types" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    {meetingTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+          {/* Type Filter */}
+          <Select value={filterType} onValueChange={(value) => {
+            setFilterType(value);
+            setCurrentPage(1);
+          }}>
+            <SelectTrigger className="w-[200px] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+              <SelectValue placeholder="All types" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Types</SelectItem>
+              {meetingTypes.map(type => (
+                <SelectItem key={type} value={type}>{type}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
 
-            {searchQuery && (
-              <p className="text-sm font-bold text-gray-600 mt-4">
-                Found {filteredNotes.length} note{filteredNotes.length !== 1 ? 's' : ''}
-              </p>
-            )}
-          </CardContent>
-        </Card>
+          {(searchQuery || dateFilter || filterType !== 'all') && (
+            <p className="text-sm font-bold text-gray-600">
+              Found {filteredNotes.length} note{filteredNotes.length !== 1 ? 's' : ''}
+            </p>
+          )}
+        </div>
 
         {/* Notes List */}
         <Card className="bg-white">
