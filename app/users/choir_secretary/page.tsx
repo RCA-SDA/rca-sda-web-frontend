@@ -14,7 +14,8 @@ export default function ChoirSecretaryDashboard() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="min-h-screen bg-[#fafafa] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <div>
         <h2 className="text-4xl font-black uppercase mb-2">Dashboard</h2>
         <p className="text-gray-600 font-bold">Welcome back, Choir Secretary!</p>
@@ -80,6 +81,7 @@ export default function ChoirSecretaryDashboard() {
           </Link>
         </CardContent>
       </Card>
-    </div>
+      </div>
+      </div>
   );
 }

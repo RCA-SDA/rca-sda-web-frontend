@@ -47,12 +47,11 @@ export default function ChoirSecretaryLayout({
                 Choir Secretary Portal
               </h1>
               <p className="text-sm font-bold text-gray-600 mt-1">
-                Manage Songs & Choir Activities
+                Manage choir songs and activities
               </p>
             </div>
             
             <div className="flex items-center gap-4">
-              {/* Profile */}
               <Link 
                 href="/users/choir_secretary/profile"
                 className="flex items-center gap-2 px-4 py-2 bg-purple-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"

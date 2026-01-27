@@ -37,7 +37,8 @@ export default function AllSongsPage() {
   );
 
   return (
-    <div className="space-y-6">
+       <div className="min-h-screen bg-[#fafafa] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
       <div>
         <h2 className="text-4xl font-black uppercase mb-2">All Songs</h2>
         <p className="text-gray-600 font-bold">Manage and view all choir songs</p>
@@ -84,6 +85,7 @@ export default function AllSongsPage() {
           <p className="text-gray-600 font-bold">No songs found</p>
         </div>
       )}
-    </div>
+      </div>
+      </div>
   );
 }

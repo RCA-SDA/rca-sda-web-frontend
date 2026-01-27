@@ -68,7 +68,8 @@ export default function AddSongsPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
+        <div className="min-h-screen bg-[#fafafa] py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 space-y-6 lg:px-8">
       <div>
         <h2 className="text-4xl font-black uppercase mb-2">Add New Song</h2>
         <p className="text-gray-600 font-bold">Upload a new song for the choir</p>
@@ -180,6 +181,7 @@ export default function AddSongsPage() {
           </form>
         </CardContent>
       </Card>
-    </div>
+      </div>
+      </div>
   );
 }
