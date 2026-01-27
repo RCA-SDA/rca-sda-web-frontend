@@ -13,9 +13,14 @@ import Link from 'next/link';
 // Dummy credentials for testing
 const DUMMY_CREDENTIALS = {
   father: {
-    email: 'father@rcasda.com',
+    email: 'father@gmail.com',
     password: 'father123',
     redirect: '/users/father'
+  },
+    mother: {
+    email: 'mother@gmail.com',
+    password: 'mother123',
+    redirect: '/users/mother'
   },
   admin: {
     email: 'admin@rcasda.com',
