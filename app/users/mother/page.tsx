@@ -17,12 +17,12 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function FatherPortalPage() {
+export default function MotherPortalPage() {
   // Mock data - replace with actual auth and API calls
-  const father = {
-    name: 'John Smith',
+  const mother = {
+    name: 'Sarah Smith',
     family: 'Salvation Siblings',
-    role: 'Father',
+    role: 'Mother',
   };
 
   const familyMembers = [
@@ -50,10 +50,10 @@ export default function FatherPortalPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-black uppercase transform -rotate-1 mb-2">
-            Father Portal
+            Mother Portal
           </h1>
           <p className="text-xl font-bold">
-            Welcome, {father.name} - {father.family}
+            Welcome, {mother.name} - {mother.family}
           </p>
         </div>
 
@@ -122,14 +122,14 @@ export default function FatherPortalPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <Link href="/users/father/sabbath-report">
+              <Link href="/users/mother/sabbath-report">
                 <Button className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <Calendar className="w-6 h-6 mr-2" />
                   Mark Attendance
                 </Button>
               </Link>
 
-              <Link href="/users/father/family">
+              <Link href="/users/mother/family">
                 <Button 
                   variant="outline"
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
@@ -139,7 +139,7 @@ export default function FatherPortalPage() {
                 </Button>
               </Link>
 
-              <Link href="/users/father/history">
+              <Link href="/users/mother/history">
                 <Button 
                   variant="outline"
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
@@ -235,11 +235,11 @@ export default function FatherPortalPage() {
         </div>
 
         {/* Responsibilities */}
-        <Card className="mt-6 bg-gradient-to-br from-green-200 to-blue-200">
+        <Card className="mt-6 bg-gradient-to-br from-pink-200 to-purple-200">
           <CardHeader>
             <CardTitle className="uppercase flex items-center gap-2">
               <FileText className="w-6 h-6" />
-              Father's Responsibilities
+              Mother's Responsibilities
             </CardTitle>
           </CardHeader>
           <CardContent>

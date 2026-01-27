@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Family, Member, SabbathAttendance } from '@/types';
+import { Family, Member } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -37,8 +37,8 @@ export default function SabbathReportPage() {
 
   // Mock current user - replace with actual auth
   const currentUser = {
-    id: '1',
-    role: 'Father',
+    id: '2',
+    role: 'Mother',
     family: 'Salvation Siblings' as Family,
   };
 
