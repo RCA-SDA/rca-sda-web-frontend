@@ -12,6 +12,11 @@ import Link from 'next/link';
 
 // Dummy credentials for testing
 const DUMMY_CREDENTIALS = {
+        evangelism_leader_female: {
+    email: 'evangelism_leader_female@gmail.com',
+    password: 'user123',
+    redirect: '/users/evangelism_leader_female'
+  },
       evangelism_leader_male: {
     email: 'evangelism_leader_male@gmail.com',
     password: 'user123',
