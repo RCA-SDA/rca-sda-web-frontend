@@ -12,19 +12,55 @@ import Link from 'next/link';
 
 // Dummy credentials for testing
 const DUMMY_CREDENTIALS = {
+    assistant_elder_female: {
+    email: 'assistant_elder_female@gmail.com',
+    password: 'user123',
+    redirect: '/users/assistant_elder_female'
+  },
+  assistant_elder_male: {
+    email: 'assistant_elder_male@gmail.com',
+    password: 'user123',
+    redirect: '/users/assistant_elder_male'
+  },
+        evangelism_leader_female: {
+    email: 'evangelism_leader_female@gmail.com',
+    password: 'user123',
+    redirect: '/users/evangelism_leader_female'
+  },
+      evangelism_leader_male: {
+    email: 'evangelism_leader_male@gmail.com',
+    password: 'user123',
+    redirect: '/users/evangelism_leader_male'
+  },
+    grand_mother: {
+    email: 'grand_mother@gmail.com',
+    password: 'user123',
+    redirect: '/users/grand_mother'
+  },
+  grand_father: {
+    email: 'grand_father@gmail.com',
+    password: 'user123',
+    redirect: '/users/grand_father'
+  },
   father: {
     email: 'father@gmail.com',
     password: 'user123',
     redirect: '/users/father'
   },
-    mother: {
+  mother: {
     email: 'mother@gmail.com',
     password: 'user123',
     redirect: '/users/mother'
-  },   church_secretary: {
+  },
+  church_secretary: {
     email: 'church_secretary@gmail.com',
     password: 'user123',
     redirect: '/users/church_secretary'
+  },
+  choir_secretary: {
+    email: 'choir_secretary@gmail.com',
+    password: 'user123',
+    redirect: '/users/choir_secretary'
   },
   admin: {
     email: 'admin@rcasda.com',

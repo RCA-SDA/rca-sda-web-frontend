@@ -2,7 +2,7 @@
 export type Level = 'Y1' | 'Y2' | 'Y3';
 export type Status = 'Current Student' | 'Alumni/Graduated';
 export type Family = 'Salvation Siblings' | 'Ebenezer' | 'Jehova-nissi';
-export type Role = 'Member' | 'Father' | 'Mother' | 'Leader' | 'Choir Secretary';
+export type Role = 'Member' | 'Father' | 'Mother' | 'Leader' | 'Choir Secretary' | 'Assistant Elder' | 'Deacon' | 'Deaconess';
 
 export interface Member {
   id: string;
