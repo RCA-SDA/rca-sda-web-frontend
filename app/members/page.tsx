@@ -347,24 +347,24 @@ function AddMemberModal({ onClose }: { onClose: () => void }) {
 
   return (
     <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Add New Member</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           {/* Profile Picture Upload */}
           <div className="space-y-2">
             <Label>Profile Picture</Label>
-            <div className="flex flex-col items-center gap-4">
+            <div className="flex items-center gap-4">
               {profileImage ? (
                 <div className="relative">
-                  <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                  <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                     <Image
                       src={profileImage}
                       alt="Profile preview"
-                      width={128}
-                      height={128}
+                      width={80}
+                      height={80}
                       className="object-cover w-full h-full"
                     />
                   </div>
@@ -377,12 +377,12 @@ function AddMemberModal({ onClose }: { onClose: () => void }) {
                   </button>
                 </div>
               ) : (
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-yellow-300 to-pink-300 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
-                  <User className="w-16 h-16 text-black" strokeWidth={3} />
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-yellow-300 to-pink-300 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center justify-center">
+                  <User className="w-10 h-10 text-black" strokeWidth={3} />
                 </div>
               )}
               <label className="cursor-pointer">
-                <div className="flex items-center gap-2 px-4 py-2 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-bold">
+                <div className="flex items-center gap-2 px-3 py-2 bg-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[2px] hover:translate-y-[2px] hover:shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] transition-all font-bold text-sm">
                   <Upload className="w-4 h-4" />
                   Upload Photo
                 </div>
@@ -418,37 +418,39 @@ function AddMemberModal({ onClose }: { onClose: () => void }) {
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="level">Level</Label>
-            <Select
-              value={formData.level}
-              onValueChange={(value) => setFormData({ ...formData, level: value as Level })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Y1">Y1</SelectItem>
-                <SelectItem value="Y2">Y2</SelectItem>
-                <SelectItem value="Y3">Y3</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="level">Level</Label>
+              <Select
+                value={formData.level}
+                onValueChange={(value) => setFormData({ ...formData, level: value as Level })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Y1">Y1</SelectItem>
+                  <SelectItem value="Y2">Y2</SelectItem>
+                  <SelectItem value="Y3">Y3</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="status">Status</Label>
-            <Select
-              value={formData.status}
-              onValueChange={(value) => setFormData({ ...formData, status: value as Status })}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Current Student">Current Student</SelectItem>
-                <SelectItem value="Alumni/Graduated">Alumni/Graduated</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="space-y-2">
+              <Label htmlFor="status">Status</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value) => setFormData({ ...formData, status: value as Status })}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Current Student">Current Student</SelectItem>
+                  <SelectItem value="Alumni/Graduated">Alumni/Graduated</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
 
           <div className="space-y-2">
@@ -468,7 +470,7 @@ function AddMemberModal({ onClose }: { onClose: () => void }) {
             </Select>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex gap-3 pt-3">
             <Button
               type="button"
               variant="outline"

@@ -22,6 +22,10 @@ export interface SabbathAttendance {
   memberId: string;
   family: Family;
   date: Date;
+  isPresent: boolean; // Whether member was present
+  hasReason?: boolean; // Whether there's a reason for absence
+  hasNoReason?: boolean; // Whether there's no reason for absence
+  isSick?: boolean; // Whether absence was due to sickness
   attendedSabbath: boolean;
   attendedStartingSabbath: boolean;
   studiedBible: number; // 0-7 days
@@ -38,8 +42,11 @@ export interface CommitteeMeeting {
   id: string;
   title: string;
   date: Date;
-  notes: string;
+  recorder: string; // Person recording the meeting
   attendees: string[];
+  agenda: string[]; // List of agenda items
+  notes: string; // General meeting notes
+  decisions: string[]; // List of decisions made
   createdBy: string;
   createdAt: Date;
 }
@@ -92,5 +99,21 @@ export interface Testimony {
   author: string;
   authorEmail?: string;
   isApproved: boolean;
+  createdAt: Date;
+}
+
+// Resource Types
+export type ResourceCategory = 'Spiritual Growth' | 'Bible Study' | 'Youth' | 'Family' | 'Health' | 'Prophecy';
+
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  description: string;
+  category: ResourceCategory;
+  coverImageUrl?: string;
+  pdfUrl?: string;
+  externalUrl?: string;
+  uploadedBy: string;
   createdAt: Date;
 }
