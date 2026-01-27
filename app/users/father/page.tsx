@@ -39,10 +39,9 @@ export default function FatherPortalPage() {
   ];
 
   const weeklyStats = {
-    attendanceRate: 92,
-    bibleStudyRate: 75,
-    visitationRate: 50,
-    helpingRate: 65,
+    sabbathPerformance: 85,
+    sabbathRank: 3,
+    absentLastSabbath: 1,
   };
 
   return (
@@ -76,39 +75,39 @@ export default function FatherPortalPage() {
           <Card className="bg-green-200 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
             <CardHeader>
               <CardTitle className="uppercase text-sm flex items-center justify-between">
-                <span>Attendance Rate</span>
+                <span>Sabbath Performance</span>
                 <TrendingUp className="w-6 h-6" />
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{weeklyStats.attendanceRate}%</p>
-              <p className="text-sm font-bold mt-2">Last 4 weeks</p>
+              <p className="text-4xl font-black">{weeklyStats.sabbathPerformance}%</p>
+              <p className="text-sm font-bold mt-2">Overall score</p>
             </CardContent>
           </Card>
 
           <Card className="bg-purple-200 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
             <CardHeader>
               <CardTitle className="uppercase text-sm flex items-center justify-between">
-                <span>Bible Study</span>
+                <span>Sabbath Rank</span>
                 <BookOpen className="w-6 h-6" />
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{weeklyStats.bibleStudyRate}%</p>
-              <p className="text-sm font-bold mt-2">Weekly completion</p>
+              <p className="text-4xl font-black">#{weeklyStats.sabbathRank}</p>
+              <p className="text-sm font-bold mt-2">Family ranking</p>
             </CardContent>
           </Card>
 
           <Card className="bg-yellow-200 hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
             <CardHeader>
               <CardTitle className="uppercase text-sm flex items-center justify-between">
-                <span>Service Rate</span>
+                <span>Absent Last Sabbath</span>
                 <Heart className="w-6 h-6" />
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{weeklyStats.helpingRate}%</p>
-              <p className="text-sm font-bold mt-2">Helping others</p>
+              <p className="text-4xl font-black">{weeklyStats.absentLastSabbath}</p>
+              <p className="text-sm font-bold mt-2">Family members</p>
             </CardContent>
           </Card>
         </div>
