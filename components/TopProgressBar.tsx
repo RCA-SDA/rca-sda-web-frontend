@@ -39,7 +39,7 @@ export default function TopProgressBar() {
   if (!isLoading && progress === 0) return null;
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-[9999] h-2">
+    <div className="fixed top-0 left-0 right-0 z-[9999] h-[3px]">
       <div
         className="h-full bg-black border-b-0 border-r-0 border-black transition-all duration-200 ease-out"
         style={{

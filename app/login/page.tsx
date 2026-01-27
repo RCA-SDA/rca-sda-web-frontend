@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle, UserCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -84,6 +85,7 @@ export default function LoginPage() {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
+    role: '',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -155,6 +157,39 @@ export default function LoginPage() {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Role Field */}
+              <div className="space-y-2">
+                <Label htmlFor="role" className="font-bold text-lg">
+                  Role
+                </Label>
+                <div className="relative">
+                  <UserCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600 z-10 pointer-events-none" />
+                  <Select
+                    value={formData.role}
+                    onValueChange={(value) => setFormData({ ...formData, role: value })}
+                  >
+                    <SelectTrigger className="pl-10 h-12">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="elder_female">Elder (Female)</SelectItem>
+                      <SelectItem value="elder_male">Elder (Male)</SelectItem>
+                      <SelectItem value="assistant_elder_female">Assistant Elder (Female)</SelectItem>
+                      <SelectItem value="assistant_elder_male">Assistant Elder (Male)</SelectItem>
+                      <SelectItem value="evangelism_leader_female">Evangelism Leader (Female)</SelectItem>
+                      <SelectItem value="evangelism_leader_male">Evangelism Leader (Male)</SelectItem>
+                      <SelectItem value="grand_mother">Grand Mother</SelectItem>
+                      <SelectItem value="grand_father">Grand Father</SelectItem>
+                      <SelectItem value="father">Father</SelectItem>
+                      <SelectItem value="mother">Mother</SelectItem>
+                      <SelectItem value="church_secretary">Church Secretary</SelectItem>
+                      <SelectItem value="choir_secretary">Choir Secretary</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               {/* Email Field */}
               <div className="space-y-2">
                 <Label htmlFor="email" className="font-bold text-lg">
