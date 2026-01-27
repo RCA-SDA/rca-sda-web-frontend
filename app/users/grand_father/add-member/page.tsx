@@ -1,46 +1,114 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   UserPlus,
   User,
-  Mail,
-  Phone,
-  Calendar,
   Users,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
 
+interface Member {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  gender: string;
+}
+
+interface Family {
+  id: string;
+  name: string;
+}
+
 export default function AddMemberPage() {
   const [formData, setFormData] = useState({
     familyId: '',
-    memberName: '',
-    memberEmail: '',
-    memberPhone: '',
-    memberDOB: '',
-    memberRole: 'mother',
+    memberId: '',
+    memberRole: 'child',
   });
 
+  const [families, setFamilies] = useState<Family[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
+  const [isLoadingFamilies, setIsLoadingFamilies] = useState(true);
+  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
-  // Mock families data - replace with actual API call
-  const families = [
-    { id: '1', name: 'Salvation Siblings' },
-    { id: '2', name: 'Grace Family' },
-    { id: '3', name: 'Faith Warriors' },
+  const memberRoles = [
+    { value: 'child', label: 'Child' },
+    { value: 'youth', label: 'Youth' },
+    { value: 'other', label: 'Other' },
   ];
 
-  const memberRoles = [
-    { value: 'mother', label: 'Mother' },
-    { value: 'youth', label: 'Youth' },
-    { value: 'child', label: 'Child' },
-  ];
+  // Fetch families list
+  useEffect(() => {
+    const fetchFamilies = async () => {
+      try {
+        setIsLoadingFamilies(true);
+        // Simulate API call - replace with actual API endpoint
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Mock data - replace with actual API response
+        const mockFamilies: Family[] = [
+          { id: '1', name: 'Salvation Siblings' },
+          { id: '2', name: 'Grace Family' },
+          { id: '3', name: 'Faith Warriors' },
+        ];
+        
+        setFamilies(mockFamilies);
+      } catch (error) {
+        console.error('Error fetching families:', error);
+      } finally {
+        setIsLoadingFamilies(false);
+      }
+    };
+
+    fetchFamilies();
+  }, []);
+
+  // Fetch members list
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        setIsLoadingMembers(true);
+        // Simulate API call - replace with actual API endpoint
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
+        // Mock data - replace with actual API response
+        const mockMembers: Member[] = [
+          { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+250 788 111 111', gender: 'male' },
+          { id: '2', name: 'Michael Smith', email: 'michael@example.com', phone: '+250 788 222 222', gender: 'male' },
+          { id: '3', name: 'David Johnson', email: 'david@example.com', phone: '+250 788 333 333', gender: 'male' },
+          { id: '4', name: 'Robert Brown', email: 'robert@example.com', phone: '+250 788 444 444', gender: 'male' },
+          { id: '5', name: 'Jane Doe', email: 'jane@example.com', phone: '+250 788 555 555', gender: 'female' },
+          { id: '6', name: 'Sarah Smith', email: 'sarah@example.com', phone: '+250 788 666 666', gender: 'female' },
+          { id: '7', name: 'Emily Johnson', email: 'emily@example.com', phone: '+250 788 777 777', gender: 'female' },
+          { id: '8', name: 'Mary Brown', email: 'mary@example.com', phone: '+250 788 888 888', gender: 'female' },
+        ];
+        
+        setMembers(mockMembers);
+      } catch (error) {
+        console.error('Error fetching members:', error);
+      } finally {
+        setIsLoadingMembers(false);
+      }
+    };
+
+    fetchMembers();
+  }, []);
+
+  const handleSelectChange = (name: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -67,11 +135,8 @@ export default function AddMemberPage() {
       setTimeout(() => {
         setFormData({
           familyId: '',
-          memberName: '',
-          memberEmail: '',
-          memberPhone: '',
-          memberDOB: '',
-          memberRole: 'mother',
+          memberId: '',
+          memberRole: 'child',
         });
         setSubmitStatus('idle');
       }, 3000);
@@ -136,21 +201,63 @@ export default function AddMemberPage() {
                   <Users className="w-4 h-4" />
                   Select Family *
                 </Label>
-                <select
-                  id="familyId"
-                  name="familyId"
-                  required
+                <Select
                   value={formData.familyId}
-                  onChange={handleInputChange}
-                  className="w-full h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold px-4 bg-white"
+                  onValueChange={(value) => handleSelectChange('familyId', value)}
+                  required
                 >
-                  <option value="">Choose a family...</option>
-                  {families.map(family => (
-                    <option key={family.id} value={family.id}>
-                      {family.name}
-                    </option>
-                  ))}
-                </select>
+                  <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                    <SelectValue placeholder={isLoadingFamilies ? "Loading families..." : "Choose a family..."} />
+                  </SelectTrigger>
+                  <SelectContent className="border-4 border-black">
+                    {isLoadingFamilies ? (
+                      <SelectItem value="loading" disabled>Loading families...</SelectItem>
+                    ) : families.length === 0 ? (
+                      <SelectItem value="no-families" disabled>No families available</SelectItem>
+                    ) : (
+                      families.map((family) => (
+                        <SelectItem key={family.id} value={family.id} className="font-bold">
+                          {family.name}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Select Member */}
+              <div className="space-y-2">
+                <Label htmlFor="memberId" className="text-sm font-black uppercase flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Select Member *
+                </Label>
+                <Select
+                  value={formData.memberId}
+                  onValueChange={(value) => handleSelectChange('memberId', value)}
+                  required
+                >
+                  <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                    <SelectValue placeholder={isLoadingMembers ? "Loading members..." : "Choose a member..."} />
+                  </SelectTrigger>
+                  <SelectContent className="border-4 border-black">
+                    {isLoadingMembers ? (
+                      <SelectItem value="loading" disabled>Loading members...</SelectItem>
+                    ) : members.length === 0 ? (
+                      <SelectItem value="no-members" disabled>No members available</SelectItem>
+                    ) : (
+                      members.map((member) => (
+                        <SelectItem key={member.id} value={member.id} className="font-bold">
+                          {member.name} - {member.email}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+                {formData.memberId && (
+                  <p className="text-sm font-bold text-gray-600 mt-2">
+                    Selected: {members.find(m => m.id === formData.memberId)?.name}
+                  </p>
+                )}
               </div>
 
               {/* Member Role */}
@@ -159,89 +266,22 @@ export default function AddMemberPage() {
                   <User className="w-4 h-4" />
                   Member Role *
                 </Label>
-                <select
-                  id="memberRole"
-                  name="memberRole"
-                  required
+                <Select
                   value={formData.memberRole}
-                  onChange={handleInputChange}
-                  className="w-full h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold px-4 bg-white"
+                  onValueChange={(value) => handleSelectChange('memberRole', value)}
+                  required
                 >
-                  {memberRoles.map(role => (
-                    <option key={role.value} value={role.value}>
-                      {role.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Member Name */}
-              <div className="space-y-2">
-                <Label htmlFor="memberName" className="text-sm font-black uppercase">
-                  Full Name *
-                </Label>
-                <Input
-                  id="memberName"
-                  name="memberName"
-                  type="text"
-                  required
-                  value={formData.memberName}
-                  onChange={handleInputChange}
-                  placeholder="e.g., Sarah Smith"
-                  className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                />
-              </div>
-
-              {/* Email and Phone */}
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="memberEmail" className="text-sm font-black uppercase flex items-center gap-2">
-                    <Mail className="w-4 h-4" />
-                    Email
-                  </Label>
-                  <Input
-                    id="memberEmail"
-                    name="memberEmail"
-                    type="email"
-                    value={formData.memberEmail}
-                    onChange={handleInputChange}
-                    placeholder="member@example.com"
-                    className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="memberPhone" className="text-sm font-black uppercase flex items-center gap-2">
-                    <Phone className="w-4 h-4" />
-                    Phone
-                  </Label>
-                  <Input
-                    id="memberPhone"
-                    name="memberPhone"
-                    type="tel"
-                    value={formData.memberPhone}
-                    onChange={handleInputChange}
-                    placeholder="+250 788 123 456"
-                    className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                  />
-                </div>
-              </div>
-
-              {/* Date of Birth */}
-              <div className="space-y-2">
-                <Label htmlFor="memberDOB" className="text-sm font-black uppercase flex items-center gap-2">
-                  <Calendar className="w-4 h-4" />
-                  Date of Birth *
-                </Label>
-                <Input
-                  id="memberDOB"
-                  name="memberDOB"
-                  type="date"
-                  required
-                  value={formData.memberDOB}
-                  onChange={handleInputChange}
-                  className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                />
+                  <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                    <SelectValue placeholder="Choose a role..." />
+                  </SelectTrigger>
+                  <SelectContent className="border-4 border-black">
+                    {memberRoles.map(role => (
+                      <SelectItem key={role.value} value={role.value} className="font-bold">
+                        {role.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* Submit Button */}
@@ -272,7 +312,7 @@ export default function AddMemberPage() {
             <ul className="space-y-2 font-bold text-sm">
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>
-                <span>Email and phone are optional for children</span>
+                <span>Select an existing member from the list to add to a family</span>
               </li>
               <li className="flex items-start gap-2">
                 <span className="text-blue-600">•</span>

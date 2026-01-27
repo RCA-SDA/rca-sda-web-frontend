@@ -11,8 +11,7 @@ import {
   User,
   Eye,
   X,
-  Search,
-  UserCheck
+  Search
 } from 'lucide-react';
 import { Pagination } from '@/components/Pagination';
 
@@ -23,7 +22,6 @@ type Family = {
   fatherEmail: string;
   fatherPhone: string;
   memberCount: number;
-  status: string;
   createdDate: string;
 };
 
@@ -36,7 +34,6 @@ const mockFamilies: Family[] = [
     fatherEmail: 'john.smith@example.com',
     fatherPhone: '+250 788 123 456',
     memberCount: 4,
-    status: 'active',
     createdDate: '2024-01-15',
   },
   {
@@ -46,7 +43,6 @@ const mockFamilies: Family[] = [
     fatherEmail: 'michael.j@example.com',
     fatherPhone: '+250 788 234 567',
     memberCount: 5,
-    status: 'active',
     createdDate: '2024-02-20',
   },
   {
@@ -56,7 +52,6 @@ const mockFamilies: Family[] = [
     fatherEmail: 'david.brown@example.com',
     fatherPhone: '+250 788 345 678',
     memberCount: 3,
-    status: 'active',
     createdDate: '2024-03-10',
   },
 ];
@@ -258,18 +253,11 @@ export default function AllFamiliesPage() {
                 </div>
               </div>
 
-              {/* Family Status */}
+              {/* Family Information */}
               <div className="space-y-4">
                 <h3 className="text-xl font-black uppercase border-b-2 border-black pb-2">
-                  Family Status
+                  Family Information
                 </h3>
-                <div className="flex items-start gap-3 p-3 bg-white border-2 border-black">
-                  <UserCheck className="w-5 h-5 flex-shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-xs font-bold uppercase text-gray-600">Status</p>
-                    <p className="font-bold capitalize">{selectedFamily.status}</p>
-                  </div>
-                </div>
                 <div className="flex items-start gap-3 p-3 bg-white border-2 border-black">
                   <Users className="w-5 h-5 flex-shrink-0 mt-0.5" />
                   <div>
