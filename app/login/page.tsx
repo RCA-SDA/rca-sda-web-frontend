@@ -17,14 +17,20 @@ const DUMMY_CREDENTIALS = {
     password: 'user123',
     redirect: '/users/father'
   },
-    mother: {
+  mother: {
     email: 'mother@gmail.com',
     password: 'user123',
     redirect: '/users/mother'
-  },   church_secretary: {
+  },
+  church_secretary: {
     email: 'church_secretary@gmail.com',
     password: 'user123',
     redirect: '/users/church_secretary'
+  },
+  choir_secretary: {
+    email: 'choir_secretary@gmail.com',
+    password: 'user123',
+    redirect: '/users/choir_secretary'
   },
   admin: {
     email: 'admin@rcasda.com',
