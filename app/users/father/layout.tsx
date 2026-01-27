@@ -116,16 +116,7 @@ export default function FatherLayout({
 
             {/* Bottom Links */}
             <div className="border-t-4 border-black pt-2 px-2 space-y-1">
-              <Link
-                href="/users/father/settings"
-                className={`flex items-center gap-3 px-3 py-3 font-black uppercase text-sm transition-all hover:bg-gray-100 border-2 border-transparent ${
-                  isCollapsed ? 'justify-center' : ''
-                }`}
-                title={isCollapsed ? 'Settings' : ''}
-              >
-                <Settings className="w-5 h-5 flex-shrink-0" />
-                {!isCollapsed && <span className="truncate">Settings</span>}
-              </Link>
+          
               
               <button
                 onClick={handleLogout}
