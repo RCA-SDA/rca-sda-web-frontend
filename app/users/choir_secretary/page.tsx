@@ -17,7 +17,7 @@ export default function ChoirSecretaryDashboard() {
     <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       <div>
-        <h2 className="text-4xl font-black uppercase mb-2">Dashboard</h2>
+        <h2 className="text-4xl font-black uppercase mb-2">Dashboard , Etoile Choir</h2>
         <p className="text-gray-600 font-bold">Welcome back, Choir Secretary!</p>
       </div>
 
@@ -44,7 +44,6 @@ export default function ChoirSecretaryDashboard() {
           </CardHeader>
           <CardContent>
             <p className="text-4xl font-black">{stats.recentUploads}</p>
-            <p className="text-sm font-bold mt-1">This month</p>
           </CardContent>
         </Card>
 
@@ -52,7 +51,7 @@ export default function ChoirSecretaryDashboard() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FolderOpen className="w-5 h-5" />
-              Active Choirs
+              Audio songs
             </CardTitle>
           </CardHeader>
           <CardContent>
