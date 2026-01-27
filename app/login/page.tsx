@@ -14,13 +14,17 @@ import Link from 'next/link';
 const DUMMY_CREDENTIALS = {
   father: {
     email: 'father@gmail.com',
-    password: 'father123',
+    password: 'user123',
     redirect: '/users/father'
   },
     mother: {
     email: 'mother@gmail.com',
-    password: 'mother123',
+    password: 'user123',
     redirect: '/users/mother'
+  },   church_secretary: {
+    email: 'church_secretary@gmail.com',
+    password: 'user123',
+    redirect: '/users/church_secretary'
   },
   admin: {
     email: 'admin@rcasda.com',
