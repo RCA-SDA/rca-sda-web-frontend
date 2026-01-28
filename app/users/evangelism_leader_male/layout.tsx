@@ -8,6 +8,7 @@ import {
   FileText,
   MessageSquare,
   BookOpen,
+  ClipboardList,
   ChevronLeft,
   ChevronRight,
   User,
@@ -36,6 +37,7 @@ export default function EvangelismLeaderMaleLayout({
     { href: '/users/evangelism_leader_male/create-blog', label: 'Create Blog', icon: FileText },
     { href: '/users/evangelism_leader_male/approve-testimonies', label: 'Approve Testimonies', icon: MessageSquare },
     { href: '/users/evangelism_leader_male/add-resource', label: 'Add Resource', icon: BookOpen },
+    { href: '/users/evangelism_leader_male/committee', label: 'Committee', icon: ClipboardList },
   ];
 
   return (
