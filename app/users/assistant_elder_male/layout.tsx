@@ -37,7 +37,7 @@ export default function AssistantElderMaleLayout({
     { href: '/users/assistant_elder_male/add-member', label: 'Add Member', icon: UserPlus },
     { href: '/users/assistant_elder_male/add-gallery', label: 'Add Gallery', icon: Image },
     { href: '/users/assistant_elder_male/assign-roles', label: 'Assign Roles', icon: Shield },
-    { href: '/users/assistant_elder_male/committee', label: 'Committee', icon: FileText },
+    { href: '/users/assistant_elder_male/committee-meeting', label: 'Committee Meeting', icon: FileText },
   ];
 
   return (

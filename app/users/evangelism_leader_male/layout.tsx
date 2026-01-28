@@ -37,7 +37,7 @@ export default function EvangelismLeaderMaleLayout({
     { href: '/users/evangelism_leader_male/create-blog', label: 'Create Blog', icon: FileText },
     { href: '/users/evangelism_leader_male/approve-testimonies', label: 'Approve Testimonies', icon: MessageSquare },
     { href: '/users/evangelism_leader_male/add-resource', label: 'Add Resource', icon: BookOpen },
-    { href: '/users/evangelism_leader_male/committee', label: 'Committee', icon: ClipboardList },
+    { href: '/users/evangelism_leader_male/committe-meeting', label: 'Committee Meeting', icon: ClipboardList },
   ];
 
   return (

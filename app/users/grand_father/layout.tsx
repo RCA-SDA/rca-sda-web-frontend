@@ -37,7 +37,7 @@ export default function GrandFatherLayout({
     { href: '/users/grand_father/create-family', label: 'Create Family', icon: FolderPlus },
     { href: '/users/grand_father/add-member', label: 'Add Member', icon: UserPlus },
     { href: '/users/grand_father/family', label: 'All Families', icon: Users },
-    { href: '/users/grand_father/committee', label: 'Committee', icon: FileText },
+    { href: '/users/grand_father/committee-meeting', label: 'Committee Meeting', icon: FileText },
   ];
 
   return (

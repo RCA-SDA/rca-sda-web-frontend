@@ -39,7 +39,7 @@ export default function ElderMaleLayout({
     { href: '/users/elder_male/add-gallery', label: 'Add Gallery', icon: Image },
     { href: '/users/elder_male/add-choirs', label: 'Add Choirs', icon: Music },
     { href: '/users/elder_male/assign-roles', label: 'Assign Roles', icon: Shield },
-    { href: '/users/elder_male/committee', label: 'Committee', icon: FileText },
+    { href: '/users/elder_male/committee-meeting', label: 'Committee Meeting', icon: FileText },
   ];
 
   return (
