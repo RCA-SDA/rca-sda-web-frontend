@@ -8,6 +8,7 @@ import {
   UserPlus,
   Image,
   Shield,
+  FileText,
   ChevronLeft,
   ChevronRight,
   User,
@@ -36,6 +37,7 @@ export default function AssistantElderFemaleLayout({
     { href: '/users/assistant_elder_female/add-member', label: 'Add Member', icon: UserPlus },
     { href: '/users/assistant_elder_female/add-gallery', label: 'Add Gallery', icon: Image },
     { href: '/users/assistant_elder_female/assign-roles', label: 'Assign Roles', icon: Shield },
+    { href: '/users/assistant_elder_female/committee-meeting', label: 'Committee Meeting', icon: FileText },
   ];
 
   return (

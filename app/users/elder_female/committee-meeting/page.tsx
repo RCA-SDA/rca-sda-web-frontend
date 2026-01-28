@@ -33,7 +33,7 @@ export default function CommitteePage() {
       ],
       notes: `Opening Prayer: Elder John led us in prayer.
 
-Church Building Maintenance:then
+Church Building Maintenance:
 - Discussed repairs needed for the roof
 - Multiple quotes reviewed from contractors
 - Timeline discussed for completion
@@ -247,7 +247,7 @@ Closing Prayer: Brother James closed in prayer.`,
               <CardContent className="p-12 text-center">
                 <p className="font-bold">
                   {meetings.length === 0 
-                    ? 'No meeting notes yet. Add your first meeting notes to get started.'
+                    ? 'No meeting notes yet.'
                     : 'No meetings found matching your filters.'}
                 </p>
               </CardContent>
@@ -286,7 +286,7 @@ Closing Prayer: Brother James closed in prayer.`,
 
 function MeetingCard({ meeting, onViewDetails }: { meeting: CommitteeMeeting; onViewDetails: () => void }) {
   return (
-    <Card className="bg-gradient-to-br from-orange-200 to-red-200 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+    <Card className="bg-gradient-to-br from-orange-200 to-red-200 hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all border-4 border-black">
       <CardHeader>
         <div className="flex justify-between items-start gap-4">
           <div className="flex-1">
@@ -301,7 +301,7 @@ function MeetingCard({ meeting, onViewDetails }: { meeting: CommitteeMeeting; on
           <Button 
             onClick={onViewDetails}
             size="sm"
-            className="bg-black text-white hover:bg-gray-800"
+            className="bg-black text-white hover:bg-gray-800 border-2 border-black font-black"
           >
             View Details
           </Button>
@@ -406,7 +406,7 @@ function ViewMeetingModal({ meeting, onClose }: { meeting: CommitteeMeeting; onC
         </div>
 
         <div className="flex justify-end pt-4">
-          <Button onClick={onClose} variant="outline">
+          <Button onClick={onClose} variant="outline" className="border-4 border-black font-black">
             Close
           </Button>
         </div>
