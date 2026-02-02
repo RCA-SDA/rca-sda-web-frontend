@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import "./globals.css";
 import Navbar from "@/components/Navbar";
 import TopProgressBar from "@/components/TopProgressBar";
+import QueryProvider from "@/lib/providers/QueryProvider";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -26,11 +27,13 @@ export default function RootLayout({
       <body
         className={`${inter.variable} font-sans antialiased`}
       >
-        <Suspense fallback={null}>
-          <TopProgressBar />
-        </Suspense>
-        <Navbar />
-        {children}
+        <QueryProvider>
+          <Suspense fallback={null}>
+            <TopProgressBar />
+          </Suspense>
+          <Navbar />
+          {children}
+        </QueryProvider>
       </body>
     </html>
   );
