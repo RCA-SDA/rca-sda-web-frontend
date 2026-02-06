@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService, type LoginInput, type RegisterInput, type User } from '@/lib/services/auth.service';
+import { getUserFromToken } from '@/lib/utils/jwt';
 
 // Login mutation
 export function useLogin() {
@@ -19,6 +20,15 @@ export function useLogin() {
 
             // Invalidate and refetch user data
             queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
+
+            // Immediate redirect after successful login
+            setTimeout(() => {
+                const userStr = localStorage.getItem('access_token');
+                if (userStr) {
+                    // For now, redirect to elder_male as test
+                    window.location.href = '/users/elder_male';
+                }
+            }, 1000);
         },
         onError: (error) => {
             console.error('❌ Login failed:', error);
@@ -80,9 +90,10 @@ export function useCurrentUser() {
     return useQuery({
         queryKey: ['auth', 'user'],
         queryFn: () => authService.getCurrentUser(),
-        enabled: !!localStorage.getItem('access_token'), // Only run if token exists
+        enabled: typeof window !== 'undefined' && !!localStorage.getItem('access_token'), // Only run if token exists and in browser
         retry: false,
         staleTime: 5 * 60 * 1000, // 5 minutes
+        select: (data) => data.user, // Extract user from response
     });
 }
 
@@ -116,6 +127,13 @@ export function useResetPassword() {
 // Check if user is authenticated
 export function useIsAuthenticated() {
     const { data: user, isLoading, error } = useCurrentUser();
+
+    console.log('🔍 Auth check:', {
+        user,
+        isLoading,
+        error,
+        isAuthenticated: !!user && !error
+    });
 
     return {
         isAuthenticated: !!user && !error,

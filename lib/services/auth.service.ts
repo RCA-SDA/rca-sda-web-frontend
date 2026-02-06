@@ -46,7 +46,7 @@ export const authService = {
         }),
 
     getCurrentUser: () =>
-        apiClient<{ user: User }>('/auth/me'),
+        apiClient<{ user: User }>('/users/me'),
 
     forgotPassword: (email: string) =>
         apiClient<{ success: boolean }>('/auth/forgot-password', {
