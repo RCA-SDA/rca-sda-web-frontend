@@ -6,34 +6,36 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
   UserPlus,
   User,
   Mail,
-  Phone,
   Users,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
+import { useCreateMember } from '@/lib/hooks/useMember';
+import type { CreateMemberInput } from '@/lib/services/member.service';
 
 export default function AddMemberPage() {
-  const [formData, setFormData] = useState({
-    name: '',
+  const [formData, setFormData] = useState<CreateMemberInput>({
+    firstName: '',
+    lastName: '',
     email: '',
-    phone: '',
+    gender: 'MALE',
     level: 'Y1',
-    status: 'Current Student',
-    family: 'Salvation Siblings',
-    role: 'Member',
+    status: 'GRADUATED',
+    role: 'USER',
+    username: '',
+    password: '',
   });
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const createMember = useCreateMember();
 
   const levels = ['Y1', 'Y2', 'Y3'];
-  const statuses = ['Current Student', 'Alumni/Graduated'];
-  const families = ['Salvation Siblings', 'Ebenezer', 'Jehova-nissi'];
-  const roles = ['Member', 'Father', 'Mother', 'Leader', 'Choir Secretary'];
+  const statuses = ['GRADUATED', 'CURRENT', 'SUSPENDED'];
+  const roles = ['USER', 'ELDER_MALE', 'ELDER_FEMALE', 'ADMIN'];
+  const genders = ['MALE', 'FEMALE'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -52,36 +54,23 @@ export default function AddMemberPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      console.log('Adding member:', formData);
-      
-      setSubmitStatus('success');
-      
-      // Reset form after success
-      setTimeout(() => {
-        setFormData({
-          name: '',
-          email: '',
-          phone: '',
-          level: 'Y1',
-          status: 'Current Student',
-          family: 'Salvation Siblings',
-          role: 'Member',
-        });
-        setSubmitStatus('idle');
-      }, 3000);
-      
+      await createMember.mutateAsync(formData);
+      // Reset form on success
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        gender: 'MALE',
+        level: 'Y1',
+        status: 'GRADUATED',
+        role: 'USER',
+        username: '',
+        password: '',
+      });
     } catch (error) {
-      console.error('Error adding member:', error);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
+      console.error('Failed to create member:', error);
     }
   };
 
@@ -99,7 +88,7 @@ export default function AddMemberPage() {
         </div>
 
         {/* Success/Error Messages */}
-        {submitStatus === 'success' && (
+        {createMember.isSuccess && (
           <Card className="mb-6 bg-green-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
@@ -110,7 +99,7 @@ export default function AddMemberPage() {
           </Card>
         )}
 
-        {submitStatus === 'error' && (
+        {createMember.isError && (
           <Card className="mb-6 bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
@@ -131,20 +120,38 @@ export default function AddMemberPage() {
           </CardHeader>
           <CardContent className="pt-6">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Name */}
+              {/* First Name */}
               <div className="space-y-2">
-                <Label htmlFor="name" className="text-sm font-black uppercase flex items-center gap-2">
+                <Label htmlFor="firstName" className="text-sm font-black uppercase flex items-center gap-2">
                   <User className="w-4 h-4" />
-                  Full Name *
+                  First Name *
                 </Label>
                 <Input
-                  id="name"
-                  name="name"
+                  id="firstName"
+                  name="firstName"
                   type="text"
                   required
-                  value={formData.name}
+                  value={formData.firstName}
                   onChange={handleInputChange}
-                  placeholder="Enter full name"
+                  placeholder="Enter first name"
+                  className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
+                />
+              </div>
+
+              {/* Last Name */}
+              <div className="space-y-2">
+                <Label htmlFor="lastName" className="text-sm font-black uppercase flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Last Name *
+                </Label>
+                <Input
+                  id="lastName"
+                  name="lastName"
+                  type="text"
+                  required
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  placeholder="Enter last name"
                   className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                 />
               </div>
@@ -167,19 +174,60 @@ export default function AddMemberPage() {
                 />
               </div>
 
-              {/* Phone */}
+              {/* Gender */}
               <div className="space-y-2">
-                <Label htmlFor="phone" className="text-sm font-black uppercase flex items-center gap-2">
-                  <Phone className="w-4 h-4" />
-                  Phone Number
+                <Label htmlFor="gender" className="text-sm font-black uppercase">
+                  Gender *
+                </Label>
+                <Select
+                  value={formData.gender}
+                  onValueChange={(value) => handleSelectChange('gender', value)}
+                  required
+                >
+                  <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="border-4 border-black">
+                    {genders.map(gender => (
+                      <SelectItem key={gender} value={gender} className="font-bold">
+                        {gender}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Username */}
+              <div className="space-y-2">
+                <Label htmlFor="username" className="text-sm font-black uppercase flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Username *
                 </Label>
                 <Input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  value={formData.phone}
+                  id="username"
+                  name="username"
+                  type="text"
+                  required
+                  value={formData.username}
                   onChange={handleInputChange}
-                  placeholder="+250 788 123 456"
+                  placeholder="Enter username"
+                  className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
+                />
+              </div>
+
+              {/* Password */}
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-sm font-black uppercase flex items-center gap-2">
+                  <User className="w-4 h-4" />
+                  Password *
+                </Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password"
                   className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                 />
               </div>
@@ -231,29 +279,6 @@ export default function AddMemberPage() {
                 </div>
               </div>
 
-              {/* Family */}
-              <div className="space-y-2">
-                <Label htmlFor="family" className="text-sm font-black uppercase flex items-center gap-2">
-                  <Users className="w-4 h-4" />
-                  Family *
-                </Label>
-                <Select
-                  value={formData.family}
-                  onValueChange={(value) => handleSelectChange('family', value)}
-                  required
-                >
-                  <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent className="border-4 border-black">
-                    {families.map(family => (
-                      <SelectItem key={family} value={family} className="font-bold">
-                        {family}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
 
               {/* Role */}
               <div className="space-y-2">
@@ -282,10 +307,10 @@ export default function AddMemberPage() {
               <div className="pt-6">
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
+                  disabled={createMember.isPending}
                   className="w-full h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-blue-400 disabled:opacity-50"
                 >
-                  {isSubmitting ? (
+                  {createMember.isPending ? (
                     'Adding Member...'
                   ) : (
                     <>

@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import TopProgressBar from "@/components/TopProgressBar";
 import QueryProvider from "@/lib/providers/QueryProvider";
+import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -32,6 +33,7 @@ export default function RootLayout({
             <TopProgressBar />
           </Suspense>
           <Navbar />
+          {/* <AuthRedirectHandler /> */}
           {children}
         </QueryProvider>
       </body>

@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Mail, ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
-import Image from 'next/image';
+import { Input } from '@/components/ui/input';
+import { Mail, Lock, CheckCircle, AlertCircle, ArrowLeft, Send } from 'lucide-react';
 import Link from 'next/link';
+import { useForgotPassword } from '@/lib/hooks/usePassword';
+import type { ForgotPasswordInput } from '@/lib/services/password.service';
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
@@ -33,17 +34,6 @@ export default function ForgotPasswordPage() {
       <div className="w-full max-w-md">
         {/* Logo and Title */}
         <div className="text-center mb-8">
-          <div className="flex justify-center mb-4">
-            <div className="relative w-24 h-24 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-              <Image 
-                src="/logo.jpeg" 
-                alt="RCA-SDA Logo" 
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          </div>
           <h1 className="text-4xl font-black uppercase transform -rotate-2 mb-2">
             RCA-SDA
           </h1>
@@ -107,7 +97,7 @@ export default function ForgotPasswordPage() {
               <div className="text-center py-6">
                 <div className="flex justify-center mb-4">
                   <div className="w-20 h-20 bg-green-400 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] rounded-full flex items-center justify-center transform rotate-6">
-                    <CheckCircle2 className="w-12 h-12 text-black" />
+                    <CheckCircle className="w-12 h-12 text-black" />
                   </div>
                 </div>
                 <h3 className="text-2xl font-black uppercase mb-4">
@@ -128,7 +118,7 @@ export default function ForgotPasswordPage() {
 
             {/* Back to Login Link */}
             <div className="text-center mt-3">
-              <Link 
+              <Link
                 href="/login"
                 className="inline-flex items-center gap-2 font-black text-blue-600 hover:text-blue-800 underline"
               >

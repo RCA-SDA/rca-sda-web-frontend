@@ -10,127 +10,42 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LogIn, Mail, Lock, Eye, EyeOff, AlertCircle, UserCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-// Dummy credentials for testing
-const DUMMY_CREDENTIALS = {
-   elder_female: {
-    email: 'elder_female@gmail.com',
-    password: 'user123',
-    redirect: '/users/elder_female'
-  },
-   elder_male: {
-    email: 'elder_male@gmail.com',
-    password: 'user123',
-    redirect: '/users/elder_male'
-  },
-    assistant_elder_female: {
-    email: 'assistant_elder_female@gmail.com',
-    password: 'user123',
-    redirect: '/users/assistant_elder_female'
-  },
-  assistant_elder_male: {
-    email: 'assistant_elder_male@gmail.com',
-    password: 'user123',
-    redirect: '/users/assistant_elder_male'
-  },
-        evangelism_leader_female: {
-    email: 'evangelism_leader_female@gmail.com',
-    password: 'user123',
-    redirect: '/users/evangelism_leader_female'
-  },
-      evangelism_leader_male: {
-    email: 'evangelism_leader_male@gmail.com',
-    password: 'user123',
-    redirect: '/users/evangelism_leader_male'
-  },
-    grand_mother: {
-    email: 'grand_mother@gmail.com',
-    password: 'user123',
-    redirect: '/users/grand_mother'
-  },
-  grand_father: {
-    email: 'grand_father@gmail.com',
-    password: 'user123',
-    redirect: '/users/grand_father'
-  },
-  father: {
-    email: 'father@gmail.com',
-    password: 'user123',
-    redirect: '/users/father'
-  },
-  mother: {
-    email: 'mother@gmail.com',
-    password: 'user123',
-    redirect: '/users/mother'
-  },
-  church_secretary: {
-    email: 'church_secretary@gmail.com',
-    password: 'user123',
-    redirect: '/users/church_secretary'
-  },
-  choir_secretary: {
-    email: 'choir_secretary@gmail.com',
-    password: 'user123',
-    redirect: '/users/choir_secretary'
-  },
-  admin: {
-    email: 'admin@rcasda.com',
-    password: 'admin123',
-    redirect: '/'
-  }
-};
+import { useLogin } from '@/lib/hooks/useAuth';
 
 export default function LoginPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    role: '',
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const login = useLogin();
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    setError('');
-
-    // Check dummy credentials
-    const credentials = Object.values(DUMMY_CREDENTIALS).find(
-      cred => cred.email === formData.email && cred.password === formData.password
-    );
-
-    // Simulate API call
-    setTimeout(() => {
-      if (credentials) {
-        // Successful login
-        console.log('Login successful:', formData.email);
-        router.push(credentials.redirect);
-      } else {
-        // Failed login
-        setError('Invalid email or password');
-        setIsLoading(false);
-      }
-    }, 800);
+    login.mutate({
+      email: formData.email,
+      password: formData.password
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#fafafa] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Grid Background */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#00000008_1px,transparent_1px),linear-gradient(to_bottom,#00000008_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
-      
+
       {/* Blurry Circular Background - Oxford Blue */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#002147] rounded-full blur-[120px] opacity-20 pointer-events-none" />
-      
+
       <div className="w-full max-w-md relative z-10">
         {/* Logo and Title */}
         <div className="text-center mb-4">
           <div className="flex justify-center mb-4">
             <div className="relative w-24 h-24 border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] bg-white">
-              <Image 
-                src="/logo.jpeg" 
-                alt="RCA-SDA Logo" 
+              <Image
+                src="/logo.jpeg"
+                alt="RCA-SDA Logo"
                 fill
                 className="object-cover"
                 priority
@@ -144,51 +59,21 @@ export default function LoginPage() {
 
         {/* Login Card */}
         <Card className="bg-white border-4 border-black shadow-[8px_8px_0px_0px_rgba(0,0,0,1)]">
-    
+
           <CardContent className="">
-           
+
 
             {/* Error Message */}
-            {error && (
+            {login.isError && (
               <div className="mb-4 p-3 bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] flex items-center gap-2">
                 <AlertCircle className="w-5 h-5 text-red-600" />
-                <p className="font-bold text-red-800">{error}</p>
+                <p className="font-bold text-red-800">
+                  {login.error instanceof Error ? login.error.message : 'Login failed'}
+                </p>
               </div>
             )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Role Field */}
-              <div className="space-y-2">
-                <Label htmlFor="role" className="font-bold text-lg">
-                  Role
-                </Label>
-                <div className="relative">
-                  <UserCircle className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-600 z-10 pointer-events-none" />
-                  <Select
-                    value={formData.role}
-                    onValueChange={(value) => setFormData({ ...formData, role: value })}
-                  >
-                    <SelectTrigger className="pl-10 h-12">
-                      <SelectValue placeholder="Select your role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="elder_female">Elder (Female)</SelectItem>
-                      <SelectItem value="elder_male">Elder (Male)</SelectItem>
-                      <SelectItem value="assistant_elder_female">Assistant Elder (Female)</SelectItem>
-                      <SelectItem value="assistant_elder_male">Assistant Elder (Male)</SelectItem>
-                      <SelectItem value="evangelism_leader_female">Evangelism Leader (Female)</SelectItem>
-                      <SelectItem value="evangelism_leader_male">Evangelism Leader (Male)</SelectItem>
-                      <SelectItem value="grand_mother">Grand Mother</SelectItem>
-                      <SelectItem value="grand_father">Grand Father</SelectItem>
-                      <SelectItem value="father">Father</SelectItem>
-                      <SelectItem value="mother">Mother</SelectItem>
-                      <SelectItem value="church_secretary">Church Secretary</SelectItem>
-                      <SelectItem value="choir_secretary">Choir Secretary</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
 
               {/* Email Field */}
               <div className="space-y-2">
@@ -248,8 +133,8 @@ export default function LoginPage() {
                   />
                   <span>Remember me</span>
                 </label>
-                <Link 
-                  href="/forgot-password" 
+                <Link
+                  href="/forgot-password"
                   className="font-bold text-blue-600 hover:text-blue-800 underline"
                 >
                   Forgot Password?
@@ -259,10 +144,10 @@ export default function LoginPage() {
               {/* Login Button */}
               <Button
                 type="submit"
-                disabled={isLoading}
+                disabled={login.isPending}
                 className="w-full h-12 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isLoading ? (
+                {login.isPending ? (
                   <span>Logging in...</span>
                 ) : (
                   <>
@@ -274,11 +159,11 @@ export default function LoginPage() {
             </form>
 
 
-          
+
           </CardContent>
         </Card>
 
-      
+
       </div>
     </div>
   );

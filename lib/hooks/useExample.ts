@@ -1,57 +1,69 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { membersService, type CreateMemberInput, type UpdateMemberInput } from '@/lib/services';
+import { memberService, type CreateMemberInput, type UpdateMemberInput } from '@/lib/services';
 
 // Example: Fetch all members
 export function useMembers() {
-  return useQuery({
-    queryKey: ['members'],
-    queryFn: membersService.getAll,
-  });
+    return useQuery({
+        queryKey: ['members'],
+        queryFn: memberService.getAll,
+    });
 }
 
 // Example: Fetch single member
-export function useMember(id: string) {
-  return useQuery({
-    queryKey: ['members', id],
-    queryFn: () => membersService.getById(id),
-    enabled: !!id,
-  });
+export function useMember(id: number) {
+    return useQuery({
+        queryKey: ['members', id],
+        queryFn: () => memberService.getById(id),
+        enabled: !!id,
+    });
 }
 
-// Example: Create member mutation
+// Example: Create member
 export function useCreateMember() {
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (data: CreateMemberInput) => membersService.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-    },
-  });
+    return useMutation({
+        mutationFn: (data: CreateMemberInput) => memberService.create(data),
+        onSuccess: () => {
+            console.log('Member created successfully');
+            queryClient.invalidateQueries({ queryKey: ['members'] });
+        },
+        onError: (error) => {
+            console.error('Failed to create member:', error);
+        },
+    });
 }
 
-// Example: Update member mutation
+// Example: Update member
 export function useUpdateMember() {
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: UpdateMemberInput }) =>
-      membersService.update(id, data),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-      queryClient.invalidateQueries({ queryKey: ['members', variables.id] });
-    },
-  });
+    return useMutation({
+        mutationFn: ({ id, data }: { id: number; data: UpdateMemberInput }) =>
+            memberService.update(id, data),
+        onSuccess: (_, variables) => {
+            console.log('Member updated successfully');
+            queryClient.invalidateQueries({ queryKey: ['members'] });
+            queryClient.invalidateQueries({ queryKey: ['members', variables.id] });
+        },
+        onError: (error) => {
+            console.error('Failed to update member:', error);
+        },
+    });
 }
 
-// Example: Delete member mutation
+// Example: Delete member
 export function useDeleteMember() {
-  const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
 
-  return useMutation({
-    mutationFn: (id: string) => membersService.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['members'] });
-    },
-  });
+    return useMutation({
+        mutationFn: (id: number) => memberService.delete(id),
+        onSuccess: () => {
+            console.log('Member deleted successfully');
+            queryClient.invalidateQueries({ queryKey: ['members'] });
+        },
+        onError: (error) => {
+            console.error('Failed to delete member:', error);
+        },
+    });
 }
