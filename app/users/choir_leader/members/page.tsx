@@ -18,18 +18,18 @@ export default function ChoirMembersPage() {
   const selectedChoir = choirs?.find(c => c.id.toString() === selectedChoirId);
 
   const getChoirMembers = () => {
-    if (!selectedChoir || !members?.members) return [];
+    if (!selectedChoir || !members) return [];
     
-    return members.members.filter(member => 
-      selectedChoir.choirMembers?.includes(member.id)
+    return members.filter(member => 
+      selectedChoir.choirMembers?.includes(member.id.toString())
     );
   };
 
-  const handleRemoveMember = async (memberId: string) => {
+  const handleRemoveMember = async (memberId: number) => {
     if (!selectedChoir) return;
 
     try {
-      const updatedMembers = selectedChoir.choirMembers?.filter(id => id !== memberId) || [];
+      const updatedMembers = selectedChoir.choirMembers?.filter(id => id !== memberId.toString()) || [];
       
       await updateChoir.mutateAsync({
         id: selectedChoir.id,

@@ -33,8 +33,13 @@ export default function AddMemberToChoirPage() {
       const choir = choirs?.find(c => c.id.toString() === selectedChoir);
       if (!choir) return;
 
-      // Add member to choir's choirMembers array
-      const updatedMembers = [...(choir.choirMembers || []), selectedMember];
+      // Add member to choir's choirMembers array (avoid duplicates)
+      const currentMembers = choir.choirMembers || [];
+      if (currentMembers.includes(selectedMember)) {
+        alert('This member is already in the choir');
+        return;
+      }
+      const updatedMembers = [...currentMembers, selectedMember];
 
       await updateChoir.mutateAsync({
         id: choir.id,
@@ -138,8 +143,8 @@ export default function AddMemberToChoirPage() {
                     <SelectValue placeholder={membersLoading ? "Loading members..." : "Choose a member"} />
                   </SelectTrigger>
                   <SelectContent className="border-4 border-black">
-                    {members?.members?.map(member => (
-                      <SelectItem key={member.id} value={member.id} className="font-bold">
+                    {members?.map(member => (
+                      <SelectItem key={member.id} value={member.id.toString()} className="font-bold">
                         {member.firstName} {member.lastName} ({member.email})
                       </SelectItem>
                     ))}
