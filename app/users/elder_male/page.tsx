@@ -2,8 +2,8 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Users, 
+import {
+  Users,
   UserPlus,
   Image,
   Shield,
@@ -12,15 +12,17 @@ import {
   TrendingUp
 } from 'lucide-react';
 import Link from 'next/link';
+import { useMembers } from '@/lib/hooks/useMember';
 
 export default function ElderMalePortalPage() {
+  const { data: members, isLoading, error } = useMembers();
   const elder = {
     name: 'Elder David Thompson',
     role: 'Elder (Male)',
   };
 
   const stats = {
-    totalMembers: 156,
+    totalMembers: members?.length || 0,
     newMembersThisMonth: 8,
     galleryItems: 234,
     choirSongs: 87,
@@ -113,7 +115,7 @@ export default function ElderMalePortalPage() {
               </Link>
 
               <Link href="/users/elder_male/add-gallery">
-                <Button 
+                <Button
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-purple-400"
                 >
                   <Image className="w-6 h-6 mr-2" />
@@ -122,7 +124,7 @@ export default function ElderMalePortalPage() {
               </Link>
 
               <Link href="/users/elder_male/add-choirs">
-                <Button 
+                <Button
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-pink-400"
                 >
                   <Music className="w-6 h-6 mr-2" />
@@ -131,7 +133,7 @@ export default function ElderMalePortalPage() {
               </Link>
 
               <Link href="/users/elder_male/assign-roles">
-                <Button 
+                <Button
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-green-400"
                 >
                   <Shield className="w-6 h-6 mr-2" />

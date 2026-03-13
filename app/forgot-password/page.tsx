@@ -15,18 +15,20 @@ export default function ForgotPasswordPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
+  const forgotPassword = useForgotPassword();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Add password reset logic here
-    console.log('Password reset requested for:', email);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
+    try {
+      await forgotPassword.mutateAsync({ email });
       setIsSubmitted(true);
-    }, 1500);
+    } catch (error) {
+      console.error('Password reset failed:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
