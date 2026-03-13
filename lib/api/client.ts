@@ -41,8 +41,16 @@ export async function apiClient<T>(
     console.log('📥 Response ok:', response.ok);
 
     if (!response.ok) {
-        const errorData = await response.json().catch(() => null);
-        console.error('❌ API Error:', errorData);
+        let errorData = { message: response.statusText };
+        try {
+            const jsonData = await response.json();
+            if (jsonData && typeof jsonData === 'object') {
+                errorData = jsonData;
+            }
+        } catch (jsonError) {
+            console.warn('⚠️ Could not parse error response as JSON:', jsonError);
+        }
+        console.error('❌ API Error:', JSON.stringify(errorData));
         throw new ApiError(
             response.status,
             errorData?.message || response.statusText,
@@ -50,7 +58,13 @@ export async function apiClient<T>(
         );
     }
 
-    const result = await response.json();
+    let result = null;
+    try {
+        result = await response.json();
+    } catch (jsonError) {
+        console.warn('⚠️ Could not parse success response as JSON:', jsonError);
+        throw new Error('Invalid JSON response from server');
+    }
     console.log('✅ Response data:', result);
     return result;
 }
