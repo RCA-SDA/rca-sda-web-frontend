@@ -17,13 +17,22 @@ import { useMembers } from '@/lib/hooks/useMember';
 export default function ElderMalePortalPage() {
   const { data: members, isLoading, error } = useMembers();
   const elder = {
-    name: 'Elder David Thompson',
+    name: 'Elder Isimbi Vieira',
     role: 'Elder (Male)',
   };
 
+  // Calculate new members this month
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  const newMembersThisMonth = members?.filter(member => {
+    if (!member.createdAt) return false;
+    const createdDate = new Date(member.createdAt);
+    return createdDate.getMonth() === currentMonth && createdDate.getFullYear() === currentYear;
+  }).length || 0;
+
   const stats = {
     totalMembers: members?.length || 0,
-    newMembersThisMonth: 8,
+    newMembersThisMonth,
     galleryItems: 234,
     choirSongs: 87,
     rolesAssigned: 42,

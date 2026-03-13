@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
   Image as ImageIcon,
   Video,
   Upload,
@@ -15,18 +15,20 @@ import {
   AlertCircle,
   FileImage
 } from 'lucide-react';
+import { useCreateGallery } from '@/lib/hooks/useGallery';
+import type { CreateGalleryInput } from '@/lib/services/gallery.service';
 
 export default function AddGalleryPage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateGalleryInput>({
     title: '',
     description: '',
-    mediaType: 'image',
-    file: null as File | null,
+    galleryItemUrl: '',
   });
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const createGalleryItem = useCreateGallery();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -36,63 +38,84 @@ export default function AddGalleryPage() {
     }));
   };
 
-  const handleSelectChange = (name: string, value: string) => {
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-      file: null,
-    }));
-    setPreviewUrl(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!formData.title) {
+      return;
+    }
+
+    try {
+      await createGalleryItem.mutateAsync(formData);
+
+      // Reset form on success
+      setFormData({
+        title: '',
+        description: '',
+        galleryItemUrl: '',
+      });
+      setPreviewUrl(null);
+
+    } catch (error) {
+      console.error('Error adding gallery item:', error);
+    }
+  };
+
+  const handleFileUpload = async () => {
+    if (!uploadedFile) return;
+
+    setIsUploading(true);
+    try {
+      // Create a simple FormData for file upload
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', uploadedFile);
+
+      console.log(' Uploading file:', uploadedFile.name);
+      console.log(' Upload endpoint:', 'https://rca-sda-backend.onrender.com/api/upload');
+
+      // Upload file to get URL (using your existing backend API)
+      const response = await fetch('https://rca-sda-backend.onrender.com/api/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      console.log(' Upload response status:', response.status);
+      console.log(' Upload response ok:', response.ok);
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error(' Upload failed. Response:', errorText);
+        throw new Error(`File upload failed: ${response.status} ${errorText}`);
+      }
+
+      const result = await response.json();
+      console.log(' Upload result:', result);
+
+      // Set the uploaded file URL in the form
+      setFormData(prev => ({
+        ...prev,
+        galleryItemUrl: result.url || ''
+      }));
+
+      setUploadedFile(null);
+      setPreviewUrl(result.url || null);
+
+    } catch (error) {
+      console.error(' Upload error:', error);
+      alert(`Upload failed: ${error.message}`);
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0] || null;
-    setFormData(prev => ({
-      ...prev,
-      file
-    }));
-
+    const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPreviewUrl(url);
-    } else {
-      setPreviewUrl(null);
+      setUploadedFile(file);
     }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setSubmitStatus('idle');
-
-    try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      
-      console.log('Adding gallery item:', {
-        ...formData,
-        fileName: formData.file?.name,
-        fileSize: formData.file?.size,
-      });
-      
-      setSubmitStatus('success');
-      
-      setTimeout(() => {
-        setFormData({
-          title: '',
-          description: '',
-          mediaType: 'image',
-          file: null,
-        });
-        setPreviewUrl(null);
-        setSubmitStatus('idle');
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Error adding gallery item:', error);
-      setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
-    }
+    // It seems to be related to file upload functionality
+    // You might need to integrate it with the rest of the code
+    // For example, you could add a file input and call this function when the file changes
   };
 
   return (
@@ -109,7 +132,7 @@ export default function AddGalleryPage() {
         </div>
 
         {/* Success/Error Messages */}
-        {submitStatus === 'success' && (
+        {createGalleryItem.isSuccess && (
           <Card className="mb-6 bg-green-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
@@ -120,7 +143,7 @@ export default function AddGalleryPage() {
           </Card>
         )}
 
-        {submitStatus === 'error' && (
+        {createGalleryItem.isError && (
           <Card className="mb-6 bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
             <CardContent className="pt-6">
               <div className="flex items-center gap-3">
@@ -176,70 +199,36 @@ export default function AddGalleryPage() {
                   />
                 </div>
 
-                {/* Media Type */}
+                {/* Gallery Item URL */}
                 <div className="space-y-2">
-                  <Label htmlFor="mediaType" className="text-sm font-black uppercase">
-                    Media Type *
-                  </Label>
-                  <Select
-                    value={formData.mediaType}
-                    onValueChange={(value) => handleSelectChange('mediaType', value)}
-                    required
-                  >
-                    <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="border-4 border-black">
-                      <SelectItem value="image" className="font-bold">
-                        <div className="flex items-center gap-2">
-                          <ImageIcon className="w-4 h-4" />
-                          Photo
-                        </div>
-                      </SelectItem>
-                      <SelectItem value="video" className="font-bold">
-                        <div className="flex items-center gap-2">
-                          <Video className="w-4 h-4" />
-                          Video
-                        </div>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* File Upload */}
-                <div className="space-y-2">
-                  <Label htmlFor="file" className="text-sm font-black uppercase">
-                    {formData.mediaType === 'image' ? 'Photo File' : 'Video File'} *
+                  <Label htmlFor="galleryItemUrl" className="text-sm font-black uppercase">
+                    Gallery Item URL *
                   </Label>
                   <Input
-                    id="file"
-                    name="file"
-                    type="file"
+                    id="galleryItemUrl"
+                    name="galleryItemUrl"
+                    type="url"
                     required
-                    accept={formData.mediaType === 'image' ? 'image/*' : 'video/*'}
-                    onChange={handleFileChange}
-                    className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold cursor-pointer"
+                    value={formData.galleryItemUrl}
+                    onChange={handleInputChange}
+                    placeholder="https://example.com/image.jpg"
+                    className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
                   />
-                  {formData.file && (
-                    <p className="text-sm font-bold text-gray-600">
-                      Selected: {formData.file.name} ({(formData.file.size / 1024 / 1024).toFixed(2)} MB)
-                    </p>
-                  )}
                 </div>
 
                 {/* Submit Button */}
                 <div className="pt-6">
                   <Button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={createGalleryItem.isPending}
                     className="w-full h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-purple-400 disabled:opacity-50"
                   >
-                    {isSubmitting ? (
-                      'Uploading...'
+                    {createGalleryItem.isPending ? (
+                      'Adding Gallery Item...'
                     ) : (
                       <>
                         <Upload className="w-5 h-5 mr-2" />
-                        Upload Media
+                        Add Gallery Item
                       </>
                     )}
                   </Button>
@@ -257,27 +246,15 @@ export default function AddGalleryPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              {previewUrl ? (
+              {formData.galleryItemUrl ? (
                 <div className="space-y-4">
-                  {formData.mediaType === 'image' ? (
-                    <div className="aspect-video bg-black rounded-lg overflow-hidden border-4 border-black">
-                      <img 
-                        src={previewUrl} 
-                        alt="Preview"
-                        className="w-full h-full object-contain"
-                      />
-                    </div>
-                  ) : (
-                    <div className="aspect-video bg-black rounded-lg overflow-hidden border-4 border-black">
-                      <video 
-                        src={previewUrl}
-                        controls
-                        className="w-full h-full"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  )}
+                  <div className="aspect-video bg-black rounded-lg overflow-hidden border-4 border-black">
+                    <img
+                      src={formData.galleryItemUrl}
+                      alt="Preview"
+                      className="w-full h-full object-contain"
+                    />
+                  </div>
                   {formData.title && (
                     <div>
                       <h3 className="font-black text-lg">{formData.title}</h3>
@@ -292,16 +269,12 @@ export default function AddGalleryPage() {
               ) : (
                 <div className="aspect-video bg-gray-200 rounded-lg border-4 border-black flex items-center justify-center">
                   <div className="text-center">
-                    {formData.mediaType === 'image' ? (
-                      <ImageIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                    ) : (
-                      <Video className="w-16 h-16 mx-auto text-gray-400 mb-4" />
-                    )}
+                    <ImageIcon className="w-16 h-16 mx-auto text-gray-400 mb-4" />
                     <p className="font-black text-gray-500">
-                      No {formData.mediaType === 'image' ? 'photo' : 'video'} selected
+                      No URL provided
                     </p>
                     <p className="text-sm font-bold text-gray-400 mt-2">
-                      Upload a file to see preview
+                      Enter a gallery item URL to see preview
                     </p>
                   </div>
                 </div>
