@@ -1,0 +1,49 @@
+Role-Based User Redirection Mapping
+
+This file contains the role-to-path mappings for the RCA-SDA Frontend project.
+
+ROLES AND THEIR REDIRECT PATHS:
+===============================
+
+USER → /dashboard
+ADMIN → /admin
+ELDER_MALE → /users/elder_male
+ELDER_FEMALE → /users/elder_female
+ASSISTANT_ELDER_MALE → /users/assistant_elder_male
+ASSISTANT_ELDER_FEMALE → /users/assistant_elder_female
+EVANGELISM_LEADER_MALE → /users/evangelism_leader_male
+EVANGELISM_LEADER_FEMALE → /users/evangelism_leader_female
+JA_LEADER_MALE → /users/ja_leader_male
+JA_LEADER_FEMALE → /users/ja_leader_female
+MIFEM_LEADER → /users/mifem_leader
+ASSISTANT_MIFEM_LEADER → /users/assistant_mifem_leader
+COMMUNITY_OUTREACH_LEADER → /users/community_outreach_leader
+CHOIR_LEADER → /users/choir_leader
+CHOIR_PATRON → /users/choir_patron
+CHOIR_DISCIPLINARY_LEADER → /users/choir_disciplinary_leader
+CHOIR_MATRON → /users/choir_matron
+CHOIR_SECRETARY → /users/choir_secretary
+CHURCH_SECRETARY → /users/church_secretary
+GRAND_FATHER → /users/grand_father
+GRAND_MOTHER → /users/grand_mother
+FATHER → /users/father
+MOTHER → /users/mother
+DEACON → /users/deacon
+DEACON_LEADER_MALE → /users/deacon_leader_male
+DEACON_LEADER_FEMALE → /users/deacon_leader_female
+
+IMPLEMENTATION FILES:
+====================
+- /lib/utils/roleRedirect.ts - Contains the role-to-path mapping logic
+- /lib/utils/protectedRoutes.ts - Contains route protection logic
+- /lib/hooks/useAuth.ts - Updated login hook with role-based redirection
+
+HOW IT WORKS:
+=============
+1. User logs in with their credentials
+2. System extracts user role from JWT token
+3. User is redirected to their role-specific page
+4. Route protection prevents access to other roles' pages
+5. Unauthorized access redirects users back to their own page
+
+Total roles supported: 28

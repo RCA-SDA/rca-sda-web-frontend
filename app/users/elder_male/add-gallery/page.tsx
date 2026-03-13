@@ -61,6 +61,15 @@ export default function AddGalleryPage() {
     }
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setUploadedFile(file);
+      const url = URL.createObjectURL(file);
+      setPreviewUrl(url);
+    }
+  };
+
   const handleFileUpload = async () => {
     if (!uploadedFile) return;
 
@@ -100,22 +109,12 @@ export default function AddGalleryPage() {
       setUploadedFile(null);
       setPreviewUrl(result.url || null);
 
-    } catch (error) {
+    } catch (error: any) {
       console.error(' Upload error:', error);
       alert(`Upload failed: ${error.message}`);
     } finally {
       setIsUploading(false);
     }
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setUploadedFile(file);
-    }
-    // It seems to be related to file upload functionality
-    // You might need to integrate it with the rest of the code
-    // For example, you could add a file input and call this function when the file changes
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authService, type LoginInput, type RegisterInput, type User } from '@/lib/services/auth.service';
 import { getUserFromToken } from '@/lib/utils/jwt';
+import { getRoleRedirectPath } from '@/lib/utils/roleRedirect';
 
 // Login mutation
 export function useLogin() {
@@ -21,13 +22,39 @@ export function useLogin() {
             // Invalidate and refetch user data
             queryClient.invalidateQueries({ queryKey: ['auth', 'user'] });
 
-            // Immediate redirect after successful login
+            // Role-based redirect after successful login
             setTimeout(() => {
-                const userStr = localStorage.getItem('access_token');
-                if (userStr) {
-                    // For now, redirect to elder_male as test
-                    window.location.href = '/users/elder_male';
+                // Debug: Check the raw token
+                const rawToken = localStorage.getItem('access_token');
+                console.log('🔑 Raw access token:', rawToken);
+
+                // Get user from token to determine role
+                const user = getUserFromToken();
+                console.log('👤 Full user data from token:', user);
+                console.log('👤 User role:', user?.role);
+                console.log('👤 User authorities:', user?.authorities);
+                console.log('👤 User role type:', typeof user?.role);
+                console.log('👤 All user properties:', user ? Object.keys(user) : 'No user data');
+
+                // Extract role from authorities if no direct role property
+                let userRole = user?.role;
+                if (!userRole && user?.authorities && Array.isArray(user.authorities)) {
+                    // Look for role in authorities array
+                    const roleAuthority = user.authorities.find((auth: string) =>
+                        auth.includes('ROLE_') && auth !== 'ROLE_USER'
+                    );
+                    if (roleAuthority) {
+                        userRole = roleAuthority.replace('ROLE_', '');
+                    }
                 }
+
+                console.log('🎯 Final user role for redirect:', userRole);
+
+                // Get redirect path based on role
+                const redirectPath = getRoleRedirectPath(userRole || 'USER');
+                console.log('🔄 Redirecting to:', redirectPath);
+
+                window.location.href = redirectPath;
             }, 1000);
         },
         onError: (error) => {
@@ -89,7 +116,37 @@ export function useLogout() {
 export function useCurrentUser() {
     return useQuery({
         queryKey: ['auth', 'user'],
-        queryFn: () => authService.getCurrentUser(),
+        queryFn: () => {
+            // Get user from JWT token instead of API call
+            const tokenUser = getUserFromToken();
+            console.log('👤 useCurrentUser - user from token:', tokenUser);
+
+            // Transform the JWT payload to match User interface
+            let user = null;
+            if (tokenUser) {
+                // Extract role from authorities if no direct role property
+                let role = tokenUser.role;
+                if (!role && tokenUser.authorities && Array.isArray(tokenUser.authorities)) {
+                    // Look for role in authorities array
+                    const roleAuthority = tokenUser.authorities.find((auth: string) =>
+                        auth.includes('ROLE_') && auth !== 'ROLE_USER'
+                    );
+                    if (roleAuthority) {
+                        role = roleAuthority.replace('ROLE_', '');
+                    }
+                }
+
+                user = {
+                    id: tokenUser.sub || tokenUser.email,
+                    email: tokenUser.sub || tokenUser.email,
+                    name: tokenUser.name || tokenUser.sub || tokenUser.email,
+                    role: role || 'USER'
+                };
+            }
+
+            console.log('👤 Transformed user object:', user);
+            return { user };
+        },
         enabled: typeof window !== 'undefined' && !!localStorage.getItem('access_token'), // Only run if token exists and in browser
         retry: false,
         staleTime: 5 * 60 * 1000, // 5 minutes

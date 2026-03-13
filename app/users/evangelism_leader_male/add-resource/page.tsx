@@ -6,31 +6,81 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { BookOpen, Save, ArrowLeft, Link as LinkIcon } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { BookOpen, Save, ArrowLeft, Link as LinkIcon, Upload, CheckCircle, AlertCircle } from 'lucide-react';
 import Link from 'next/link';
+import { useCreateResource, useUploadCoverImage } from '@/lib/hooks/useResource';
+import { type CreateResourceInput } from '@/lib/services/resource.service';
 
 export default function AddResourcePage() {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CreateResourceInput>({
     title: '',
-    category: '',
     description: '',
-    resourceType: '',
-    url: '',
-    author: '',
-    tags: '',
+    coverUrl: '',
+    externalUrl: '',
+    category: 'HEALTH',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+
+  const createResource = useCreateResource();
+  const uploadCoverImage = useUploadCoverImage();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Adding resource:', formData);
-    alert('Resource added successfully!');
+
+    if (!formData.title || !formData.description) {
+      return;
+    }
+
+    try {
+      // Upload cover image first if selected
+      let coverUrl = formData.coverUrl;
+      if (coverFile) {
+        const uploadResult = await uploadCoverImage.mutateAsync(coverFile);
+        coverUrl = uploadResult.url;
+      }
+
+      // Create resource with cover URL
+      await createResource.mutateAsync({
+        ...formData,
+        coverUrl,
+      });
+
+      // Reset form on success
+      setFormData({
+        title: '',
+        description: '',
+        coverUrl: '',
+        externalUrl: '',
+        category: 'HEALTH',
+      });
+      setCoverFile(null);
+
+    } catch (error) {
+      console.error('Error creating resource:', error);
+    }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  const handleCategoryChange = (value: string) => {
+    setFormData({
+      ...formData,
+      category: value as CreateResourceInput['category'],
+    });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setCoverFile(file);
+    }
   };
 
   return (
@@ -53,6 +103,29 @@ export default function AddResourcePage() {
             </Button>
           </Link>
         </div>
+
+        {/* Success/Error Messages */}
+        {createResource.isSuccess && (
+          <Card className="mb-6 bg-green-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+                <p className="font-black text-lg">Resource added successfully!</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {createResource.isError && (
+          <Card className="mb-6 bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-3">
+                <AlertCircle className="w-6 h-6 text-red-600" />
+                <p className="font-black text-lg">Failed to add resource. Please try again.</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Form */}
         <Card className="bg-white border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
@@ -80,72 +153,60 @@ export default function AddResourcePage() {
                 />
               </div>
 
-              {/* Resource Type */}
-              <div>
-                <Label htmlFor="resourceType" className="text-sm font-black uppercase mb-2 block">
-                  Resource Type *
-                </Label>
-                <select
-                  id="resourceType"
-                  name="resourceType"
-                  value={formData.resourceType}
-                  onChange={handleChange}
-                  required
-                  className="w-full border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all px-3 py-2 bg-white"
-                >
-                  <option value="">Select type</option>
-                  <option value="book">Book</option>
-                  <option value="video">Video</option>
-                  <option value="article">Article</option>
-                  <option value="podcast">Podcast</option>
-                  <option value="course">Course</option>
-                  <option value="tool">Tool</option>
-                </select>
-              </div>
-
               {/* Category */}
               <div>
                 <Label htmlFor="category" className="text-sm font-black uppercase mb-2 block">
                   Category *
                 </Label>
-                <Input
-                  id="category"
-                  name="category"
-                  value={formData.category}
-                  onChange={handleChange}
-                  required
-                  className="border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
-                  placeholder="e.g., Evangelism Training, Outreach Tools"
-                />
+                <Select value={formData.category} onValueChange={handleCategoryChange}>
+                  <SelectTrigger className="border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent className="border-4 border-black">
+                    <SelectItem value="HEALTH" className="font-bold">Health</SelectItem>
+                    <SelectItem value="EDUCATION" className="font-bold">Education</SelectItem>
+                    <SelectItem value="SPIRITUAL" className="font-bold">Spiritual</SelectItem>
+                    <SelectItem value="COMMUNITY" className="font-bold">Community</SelectItem>
+                    <SelectItem value="OUTREACH" className="font-bold">Outreach</SelectItem>
+                    <SelectItem value="ADMINISTRATION" className="font-bold">Administration</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              {/* Author */}
+              {/* Cover Image Upload */}
               <div>
-                <Label htmlFor="author" className="text-sm font-black uppercase mb-2 block">
-                  Author/Creator
+                <Label htmlFor="coverImage" className="text-sm font-black uppercase mb-2 block">
+                  Cover Image
                 </Label>
-                <Input
-                  id="author"
-                  name="author"
-                  value={formData.author}
-                  onChange={handleChange}
-                  className="border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
-                  placeholder="Enter author or creator name"
-                />
+                <div className="space-y-2">
+                  <Input
+                    id="coverImage"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileChange}
+                    className="border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
+                  />
+                  {coverFile && (
+                    <p className="text-sm text-gray-600">Selected: {coverFile.name}</p>
+                  )}
+                  {uploadCoverImage.isPending && (
+                    <p className="text-sm text-blue-600">Uploading image...</p>
+                  )}
+                </div>
               </div>
 
-              {/* URL */}
+              {/* External URL */}
               <div>
-                <Label htmlFor="url" className="text-sm font-black uppercase mb-2 block">
-                  Resource URL
+                <Label htmlFor="externalUrl" className="text-sm font-black uppercase mb-2 block">
+                  External URL (Optional)
                 </Label>
                 <div className="relative">
                   <LinkIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
                   <Input
-                    id="url"
-                    name="url"
+                    id="externalUrl"
+                    name="externalUrl"
                     type="url"
-                    value={formData.url}
+                    value={formData.externalUrl}
                     onChange={handleChange}
                     className="border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all pl-10"
                     placeholder="https://example.com/resource"
@@ -170,29 +231,21 @@ export default function AddResourcePage() {
                 />
               </div>
 
-              {/* Tags */}
-              <div>
-                <Label htmlFor="tags" className="text-sm font-black uppercase mb-2 block">
-                  Tags
-                </Label>
-                <Input
-                  id="tags"
-                  name="tags"
-                  value={formData.tags}
-                  onChange={handleChange}
-                  className="border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] focus:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all"
-                  placeholder="Separate tags with commas"
-                />
-              </div>
-
               {/* Submit Button */}
               <div className="flex gap-4 pt-4">
                 <Button
                   type="submit"
-                  className="flex-1 h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-cyan-400"
+                  disabled={createResource.isPending || uploadCoverImage.isPending}
+                  className="flex-1 h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-cyan-400 disabled:opacity-50"
                 >
-                  <Save className="w-5 h-5 mr-2" />
-                  Add Resource
+                  {createResource.isPending || uploadCoverImage.isPending ? (
+                    'Adding...'
+                  ) : (
+                    <>
+                      <Save className="w-5 h-5 mr-2" />
+                      Add Resource
+                    </>
+                  )}
                 </Button>
               </div>
             </form>
