@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
-import { 
+import {
   Shield,
   User,
   Search,
@@ -14,22 +14,14 @@ import {
   AlertCircle,
   Users
 } from 'lucide-react';
-
-interface Member {
-  id: string;
-  name: string;
-  email: string;
-  currentRole: string;
-  family: string;
-  level: string;
-}
+import { useMembers } from '@/lib/hooks/useMember';
+import type { Member } from '@/lib/services/member.service';
 
 export default function AssignRolesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [newRole, setNewRole] = useState('');
-  const [members, setMembers] = useState<Member[]>([]);
-  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
+  const { data: members, isLoading: isLoadingMembers } = useMembers();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
@@ -44,83 +36,49 @@ export default function AssignRolesPage() {
     'Deaconess',
   ];
 
-  // Fetch members list
-  useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        setIsLoadingMembers(true);
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock data
-        const mockMembers: Member[] = [
-          { id: '1', name: 'John Smith', email: 'john@example.com', currentRole: 'Member', family: 'Salvation Siblings', level: 'Y1' },
-          { id: '2', name: 'Sarah Johnson', email: 'sarah@example.com', currentRole: 'Member', family: 'Ebenezer', level: 'Y2' },
-          { id: '3', name: 'Michael Brown', email: 'michael@example.com', currentRole: 'Father', family: 'Salvation Siblings', level: 'Y3' },
-          { id: '4', name: 'Emily Davis', email: 'emily@example.com', currentRole: 'Mother', family: 'Jehova-nissi', level: 'Y1' },
-          { id: '5', name: 'David Wilson', email: 'david@example.com', currentRole: 'Member', family: 'Ebenezer', level: 'Y2' },
-          { id: '6', name: 'Lisa Anderson', email: 'lisa@example.com', currentRole: 'Choir Secretary', family: 'Salvation Siblings', level: 'Y3' },
-          { id: '7', name: 'James Taylor', email: 'james@example.com', currentRole: 'Member', family: 'Jehova-nissi', level: 'Y1' },
-          { id: '8', name: 'Mary Martinez', email: 'mary@example.com', currentRole: 'Member', family: 'Ebenezer', level: 'Y2' },
-        ];
-        
-        setMembers(mockMembers);
-      } catch (error) {
-        console.error('Error fetching members:', error);
-      } finally {
-        setIsLoadingMembers(false);
-      }
-    };
-
-    fetchMembers();
-  }, []);
-
   const filteredMembers = searchQuery.trim() === ''
-    ? members
-    : members.filter(member =>
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.email.toLowerCase().includes(searchQuery.toLowerCase())
+    ? (members || [])
+    : (members || []).filter(member =>
+        member.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.lastName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.email?.toLowerCase().includes(searchQuery.toLowerCase())
       );
 
-  const handleMemberSelect = (memberId: string) => {
-    const member = members.find(m => m.id === memberId);
+  const handleMemberSelect = (memberId: number) => {
+    const member = members?.find(m => m.id === memberId);
     setSelectedMember(member || null);
-    setNewRole(member?.currentRole || '');
+    setNewRole(member?.role || '');
     setSubmitStatus('idle');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedMember || !newRole) return;
+    if (!selectedMember || !newRole || newRole === selectedMember.role) return;
 
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
+      // TODO: Implement actual role assignment API call
       console.log('Assigning role:', {
         memberId: selectedMember.id,
-        memberName: selectedMember.name,
-        oldRole: selectedMember.currentRole,
+        memberName: `${selectedMember.firstName} ${selectedMember.lastName}`,
+        oldRole: selectedMember.role,
         newRole: newRole,
       });
-      
-      // Update local state
-      setMembers(prev => prev.map(m => 
-        m.id === selectedMember.id 
-          ? { ...m, currentRole: newRole }
-          : m
-      ));
-      
+
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
       setSubmitStatus('success');
-      
+
       // Reset after success
       setTimeout(() => {
         setSelectedMember(null);
         setNewRole('');
         setSubmitStatus('idle');
       }, 3000);
-      
+
     } catch (error) {
       console.error('Error assigning role:', error);
       setSubmitStatus('error');
@@ -212,15 +170,15 @@ export default function AssignRolesPage() {
                     >
                       <div className="flex items-start justify-between">
                         <div>
-                          <p className="font-black">{member.name}</p>
+                          <p className="font-black">{member.firstName} {member.lastName}</p>
                           <p className="text-sm font-bold text-gray-600">{member.email}</p>
                           <p className="text-sm font-bold text-gray-600 mt-1">
-                            {member.family} • {member.level}
+                            {member.gender} • {member.role}
                           </p>
                         </div>
                         <div className="text-right">
                           <span className="inline-block px-3 py-1 bg-yellow-200 border-2 border-black text-xs font-black uppercase">
-                            {member.currentRole}
+                            {member.role}
                           </span>
                         </div>
                       </div>
@@ -250,15 +208,15 @@ export default function AssignRolesPage() {
                           <User className="w-6 h-6" />
                         </div>
                         <div>
-                          <p className="font-black text-lg">{selectedMember.name}</p>
+                          <p className="font-black text-lg">{selectedMember.firstName} {selectedMember.lastName}</p>
                           <p className="text-sm font-bold text-gray-600">{selectedMember.email}</p>
                           <p className="text-sm font-bold text-gray-600 mt-1">
-                            {selectedMember.family} • {selectedMember.level}
+                            {selectedMember.gender} • {selectedMember.role}
                           </p>
                           <div className="mt-3">
                             <span className="text-xs font-black uppercase text-gray-500">Current Role:</span>
                             <span className="ml-2 inline-block px-3 py-1 bg-yellow-200 border-2 border-black text-xs font-black uppercase">
-                              {selectedMember.currentRole}
+                              {selectedMember.role}
                             </span>
                           </div>
                         </div>
@@ -291,13 +249,13 @@ export default function AssignRolesPage() {
                   </div>
 
                   {/* Role Change Summary */}
-                  {newRole && newRole !== selectedMember.currentRole && (
+                  {newRole && newRole !== selectedMember.role && (
                     <Card className="bg-blue-100 border-4 border-black">
                       <CardContent className="pt-6">
                         <p className="font-black text-sm uppercase mb-2">Role Change Summary:</p>
                         <div className="flex items-center gap-3">
                           <span className="px-3 py-1 bg-red-200 border-2 border-black text-sm font-black">
-                            {selectedMember.currentRole}
+                            {selectedMember.role}
                           </span>
                           <span className="font-black">→</span>
                           <span className="px-3 py-1 bg-green-200 border-2 border-black text-sm font-black">
@@ -312,7 +270,7 @@ export default function AssignRolesPage() {
                   <div className="pt-6">
                     <Button
                       type="submit"
-                      disabled={isSubmitting || !newRole || newRole === selectedMember.currentRole}
+                      disabled={isSubmitting || !newRole || newRole === selectedMember.role}
                       className="w-full h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-green-400 disabled:opacity-50"
                     >
                       {isSubmitting ? (

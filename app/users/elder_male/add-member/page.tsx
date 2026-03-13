@@ -34,7 +34,34 @@ export default function AddMemberPage() {
 
   const levels = ['Y1', 'Y2', 'Y3'];
   const statuses = ['GRADUATED', 'CURRENT', 'SUSPENDED'];
-  const roles = ['USER', 'ELDER_MALE', 'ELDER_FEMALE', 'ADMIN'];
+  const roles = [
+  'USER',
+  'ELDER_MALE',
+  'ELDER_FEMALE',
+  'ASSISTANT_ELDER_MALE',
+  'ASSISTANT_ELDER_FEMALE',
+  'EVANGELISM_LEADER_MALE',
+  'EVANGELISM_LEADER_FEMALE',
+  'JA_LEADER_MALE',
+  'JA_LEADER_FEMALE',
+  'MIFEM_LEADER',
+  'ASSISTANT_MIFEM_LEADER',
+  'COMMUNITY_OUTREACH_LEADER',
+  'CHOIR_LEADER',
+  'CHOIR_PATRON',
+  'CHOIR_DISCIPLINARY_LEADER',
+  'CHOIR_MATRON',
+  'CHOIR_SECRETARY',
+  'CHURCH_SECRETARY',
+  'GRAND_FATHER',
+  'GRAND_MOTHER',
+  'FATHER',
+  'MOTHER',
+  'DEACON',
+  'DEACON_LEADER_MALE',
+  'DEACON_LEADER_FEMALE',
+  'ADMIN'
+];
   const genders = ['MALE', 'FEMALE'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
