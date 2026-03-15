@@ -2,43 +2,88 @@
 
 import UserProfile, { UserProfileData } from '@/components/UserProfile';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Shield, Users, Image, Music } from 'lucide-react';
+import { Shield, Users, Image, Music, Loader2 } from 'lucide-react';
+import { useCurrentUser, useUpdateCurrentUser } from '@/lib/hooks/useCurrentUser';
+import { type CurrentUser } from '@/lib/services/currentUser.service';
 
 export default function ProfilePage() {
+  const { data: currentUser, isLoading, error } = useCurrentUser();
+  const updateCurrentUser = useUpdateCurrentUser();
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-bold">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !currentUser) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <Card className="bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <CardContent className="p-8 text-center">
+            <p className="text-lg font-black">Failed to load profile</p>
+            <p className="text-sm text-gray-600 mt-2">Please try again later</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Transform API data to UserProfile format
   const elderData: UserProfileData = {
-    id: 'elder-001',
-    name: 'Elder David Thompson',
-    email: 'david.thompson@church.com',
-    phone: '+250 788 123 456',
-    role: 'Elder (Male)',
-    family: 'Salvation Siblings',
-    status: 'Active',
-    joinedDate: new Date('2020-01-15'),
+    id: currentUser.id.toString(),
+    name: `${currentUser.firstName} ${currentUser.lastName}`,
+    email: currentUser.email,
+    role: currentUser.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
+    family: currentUser.familly || 'None',
+    status: currentUser.status || 'Active',
+    joinedDate: currentUser.memberSince ? new Date(currentUser.memberSince) : new Date(),
   };
 
   const handleUpdate = async (updatedData: Partial<UserProfileData>) => {
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    console.log('Updating elder profile:', updatedData);
-    // In a real app, you would make an API call here
+    try {
+      // Transform UserProfileData back to CurrentUser format
+      const apiData: Partial<CurrentUser> = {};
+
+      if (updatedData.name) {
+        const [firstName, lastName] = updatedData.name.split(' ');
+        apiData.firstName = firstName || currentUser.firstName;
+        apiData.lastName = lastName || currentUser.lastName;
+      }
+
+      if (updatedData.family) {
+        apiData.familly = updatedData.family;
+      }
+
+      await updateCurrentUser.mutateAsync(apiData);
+      console.log('Profile updated successfully:', updatedData);
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+      throw error;
+    }
   };
 
   const customFields = [
     {
       label: 'Members Added',
-      value: 42,
+      value: currentUser.membersAdded,
       icon: <Users className="w-5 h-5" />,
     },
     {
       label: 'Gallery Items',
-      value: 156,
+      value: currentUser.galleryItems,
       icon: <Image className="w-5 h-5" />,
     },
-    {
-      label: 'Choirs Created',
-      value: 8,
-      icon: <Music className="w-5 h-5" />,
-    },
+    ...(currentUser.classroom ? [{
+      label: 'Classroom',
+      value: currentUser.classroom,
+      icon: <Shield className="w-5 h-5" />,
+    }] : []),
   ];
 
   return (

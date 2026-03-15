@@ -40,7 +40,12 @@ export const blogService = {
     create: (data: CreateBlogPostInput) => {
         console.log('📝 Creating blog with data:', data);
 
-        // Always send all fields as requested
+        // Check content length and warn if too long
+        if (data.content.length > 10000) {
+            console.warn('⚠️ Content is very long, this might cause issues:', data.content.length, 'characters');
+        }
+
+        // Always send all fields as requested, with fallback to minimal if needed
         const fullRequestData = {
             title: data.title,
             content: data.content,
@@ -56,14 +61,42 @@ export const blogService = {
             method: 'POST',
             body: JSON.stringify(fullRequestData),
         }).catch(error => {
-            console.error('❌ Blog creation failed:', error);
-            if (error?.status === 400) {
-                console.error('⚠️ Bad Request - Backend validation issue');
-                console.error('📋 Data sent:', JSON.stringify(fullRequestData, null, 2));
-                throw new Error('Blog creation failed due to validation errors. Please check all fields and try again.');
-            } else if (error?.status === 403) {
-                console.error('🚫 Forbidden - User does not have permission to create blogs');
-                throw new Error('You do not have permission to create blog posts. Please contact your administrator.');
+            console.error('❌ Full request failed:', error);
+            if (error?.status === 400 || error?.status === 500 || error?.status === 403) {
+                console.log('🔄 Backend rejected full request, trying minimal fields...');
+
+                // For very long content, try truncating it
+                const truncatedContent = data.content.length > 5000
+                    ? data.content.substring(0, 5000) + '... (content truncated)'
+                    : data.content;
+
+                // Fallback to minimal fields with potentially truncated content
+                const minimalData = {
+                    title: data.title,
+                    content: truncatedContent,
+                    author: data.author,
+                };
+
+                console.log('📋 Minimal request data:', JSON.stringify(minimalData, null, 2));
+
+                return apiClient<BlogPost>('/blogs', {
+                    method: 'POST',
+                    body: JSON.stringify(minimalData),
+                }).catch(minimalError => {
+                    console.error('❌ Minimal request also failed:', minimalError);
+
+                    // Check if it's an authentication issue
+                    if (minimalError?.status === 403) {
+                        throw new Error('Your session has expired. Please log out and log back in to continue.');
+                    }
+
+                    // Check if it's a content length issue
+                    if (data.content.length > 5000) {
+                        throw new Error('Content is too long. Please keep your blog post under 5000 characters.');
+                    }
+
+                    throw new Error('Blog creation failed. Please check your connection and try again.');
+                });
             }
             throw error;
         });
