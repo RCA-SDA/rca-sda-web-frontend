@@ -37,7 +37,7 @@ export default function ProfilePage() {
   // Transform API data to UserProfile format
   const elderData: UserProfileData = {
     id: currentUser.id.toString(),
-    name: `${currentUser.firstName} ${currentUser.lastName}`,
+    name: `${currentUser.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase())} - ${currentUser.firstName} ${currentUser.lastName}`,
     email: currentUser.email,
     role: currentUser.role.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase()),
     family: currentUser.familly || 'None',
