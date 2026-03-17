@@ -2,48 +2,79 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  FileText, 
+import {
+  FileText,
   Calendar,
   Clock,
   TrendingUp,
   Plus,
-  Eye
+  Eye,
+  Loader2
 } from 'lucide-react';
 import Link from 'next/link';
+import { useMeetingNotes } from '@/lib/hooks/useMeetingNotes';
+import { useEffect, useState } from 'react';
+import { format } from 'date-fns';
 
 export default function SecretaryDashboard() {
-  // Mock data - replace with actual API calls
-  const stats = {
-    totalNotes: 45,
-    thisMonth: 8,
-    upcomingMeetings: 3,
-    recentActivity: 12,
-  };
+  // Fetch meeting notes from API
+  const { data: meetingNotes = [], isLoading, error } = useMeetingNotes();
 
-  const recentNotes = [
-    {
-      id: '1',
-      title: 'Church Board Meeting',
-      date: new Date('2026-01-25'),
-      meetingType: 'Board Meeting',
-      attendees: 12,
-    },
-    {
-      id: '2',
-      title: 'Elders Council Meeting',
-      date: new Date('2026-01-20'),
-      meetingType: 'Council',
-      attendees: 8,
-    },
-    {
-      id: '3',
-      title: 'Youth Ministry Planning',
-      date: new Date('2026-01-18'),
-      meetingType: 'Ministry',
-      attendees: 6,
-    },
-  ];
+  // Calculate statistics
+  const [stats, setStats] = useState({
+    totalNotes: 0,
+    thisMonth: 0,
+    upcomingMeetings: 0,
+    recentActivity: 0,
+  });
+
+  const [recentNotes, setRecentNotes] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (meetingNotes) {
+      const totalNotes = meetingNotes.length;
+
+      // Notes created this month
+      const currentMonth = new Date().getMonth();
+      const currentYear = new Date().getFullYear();
+      const notesThisMonth = meetingNotes.filter(note => {
+        if (!note.createdAt) return false;
+        const noteDate = new Date(note.createdAt);
+        return noteDate.getMonth() === currentMonth && noteDate.getFullYear() === currentYear;
+      }).length;
+
+      // Notes from last 7 days (recent activity)
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+      const recentActivity = meetingNotes.filter(note => {
+        if (!note.createdAt) return false;
+        const noteDate = new Date(note.createdAt);
+        return noteDate >= sevenDaysAgo;
+      }).length;
+
+      setStats({
+        totalNotes,
+        thisMonth: notesThisMonth,
+        upcomingMeetings: 0, // No API endpoint for this yet
+        recentActivity,
+      });
+
+      // Get recent notes (last 3)
+      const sortedNotes = [...meetingNotes]
+        .filter(note => note.createdAt)
+        .sort((a, b) => new Date(b.createdAt || '').getTime() - new Date(a.createdAt || '').getTime())
+        .slice(0, 3)
+        .map(note => ({
+          id: note.id.toString(),
+          title: `Meeting Note #${note.id}`,
+          date: new Date(note.createdAt || ''),
+          meetingType: 'Meeting', // No meeting type field in API yet
+          attendees: note.attendees?.length || 0,
+        }));
+
+      setRecentNotes(sortedNotes);
+    }
+  }, [meetingNotes]);
 
   const upcomingMeetings = [
     {
@@ -69,6 +100,19 @@ export default function SecretaryDashboard() {
     },
   ];
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <Card className="bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <CardContent className="p-8 text-center">
+            <p className="text-lg font-black">Failed to load dashboard data</p>
+            <p className="text-sm text-gray-600 mt-2">Please try again later</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,7 +136,13 @@ export default function SecretaryDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{stats.totalNotes}</p>
+              <p className="text-4xl font-black">
+                {isLoading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  stats.totalNotes
+                )}
+              </p>
               <p className="text-sm font-bold mt-2">All meeting notes</p>
             </CardContent>
           </Card>
@@ -105,7 +155,13 @@ export default function SecretaryDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{stats.thisMonth}</p>
+              <p className="text-4xl font-black">
+                {isLoading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  stats.thisMonth
+                )}
+              </p>
               <p className="text-sm font-bold mt-2">Notes created</p>
             </CardContent>
           </Card>
@@ -118,7 +174,13 @@ export default function SecretaryDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{stats.upcomingMeetings}</p>
+              <p className="text-4xl font-black">
+                {isLoading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  stats.upcomingMeetings
+                )}
+              </p>
               <p className="text-sm font-bold mt-2">Scheduled meetings</p>
             </CardContent>
           </Card>
@@ -131,7 +193,13 @@ export default function SecretaryDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-black">{stats.recentActivity}</p>
+              <p className="text-4xl font-black">
+                {isLoading ? (
+                  <Loader2 className="w-8 h-8 animate-spin" />
+                ) : (
+                  stats.recentActivity
+                )}
+              </p>
               <p className="text-sm font-bold mt-2">Last 7 days</p>
             </CardContent>
           </Card>
@@ -147,7 +215,7 @@ export default function SecretaryDashboard() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Link href="/users/secretary/new-note">
+              <Link href="/users/church_secretary/new-note">
                 <Button className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all">
                   <FileText className="w-6 h-6 mr-2" />
                   New Meeting Note
@@ -155,7 +223,7 @@ export default function SecretaryDashboard() {
               </Link>
 
               <Link href="/users/secretary/notes">
-                <Button 
+                <Button
                   variant="outline"
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
                 >
@@ -165,7 +233,7 @@ export default function SecretaryDashboard() {
               </Link>
 
               <Link href="/users/secretary/calendar">
-                <Button 
+                <Button
                   variant="outline"
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
                 >
@@ -186,7 +254,7 @@ export default function SecretaryDashboard() {
                   <FileText className="w-6 h-6" />
                   Recent Notes
                 </span>
-                <Link href="/users/secretary/notes">
+                <Link href="/users/church_secretary/notes">
                   <Button size="sm" variant="outline">
                     View All
                   </Button>
@@ -196,7 +264,7 @@ export default function SecretaryDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {recentNotes.map((note) => (
-                  <div 
+                  <div
                     key={note.id}
                     className="flex items-center justify-between p-3 bg-white border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer"
                   >
@@ -206,8 +274,8 @@ export default function SecretaryDashboard() {
                         {note.meetingType} • {note.attendees} attendees
                       </p>
                       <p className="text-xs font-bold text-gray-500 mt-1">
-                        {new Date(note.date).toLocaleDateString('en-US', { 
-                          month: 'short', 
+                        {new Date(note.date).toLocaleDateString('en-US', {
+                          month: 'short',
                           day: 'numeric',
                           year: 'numeric'
                         })}
@@ -228,7 +296,7 @@ export default function SecretaryDashboard() {
                   <Calendar className="w-6 h-6" />
                   Upcoming Meetings
                 </span>
-                <Link href="/users/secretary/calendar">
+                <Link href="/users/church_secretary/calendar">
                   <Button size="sm" variant="outline">
                     View Calendar
                   </Button>
@@ -238,7 +306,7 @@ export default function SecretaryDashboard() {
             <CardContent>
               <div className="space-y-3">
                 {upcomingMeetings.map((meeting) => (
-                  <div 
+                  <div
                     key={meeting.id}
                     className="p-3 bg-white border-4 border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]"
                   >
@@ -246,8 +314,8 @@ export default function SecretaryDashboard() {
                     <div className="flex items-center gap-2 mt-2 text-sm font-bold text-gray-600">
                       <Calendar className="w-4 h-4" />
                       <span>
-                        {new Date(meeting.date).toLocaleDateString('en-US', { 
-                          month: 'short', 
+                        {new Date(meeting.date).toLocaleDateString('en-US', {
+                          month: 'short',
                           day: 'numeric',
                           year: 'numeric'
                         })}

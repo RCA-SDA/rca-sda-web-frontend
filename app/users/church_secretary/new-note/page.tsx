@@ -8,9 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Calendar } from '@/components/ui/calendar';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { 
-  Calendar as CalendarIcon, 
-  Save, 
+import {
+  Calendar as CalendarIcon,
+  Save,
   Plus,
   X,
   FileText,
@@ -18,13 +18,16 @@ import {
   ClipboardList
 } from 'lucide-react';
 import { format } from 'date-fns';
+import { useAllUsers } from '@/lib/hooks/useFamily';
+import { useCreateMeetingNote } from '@/lib/hooks/useMeetingNotes';
+import { User } from '@/lib/services/family.service';
 
 export default function NewMeetingNotePage() {
   const [formData, setFormData] = useState({
     title: '',
     date: new Date(),
     recorder: '',
-    attendees: '',
+    attendees: [] as number[],
     notes: '',
   });
   const [agendaItems, setAgendaItems] = useState<string[]>(['']);
@@ -32,6 +35,9 @@ export default function NewMeetingNotePage() {
   const [showCalendar, setShowCalendar] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  // Fetch users and meeting note mutation
+  const { data: users = [], isLoading: isLoadingUsers } = useAllUsers();
+  const createMeetingNoteMutation = useCreateMeetingNote();
 
   const addAgendaItem = () => {
     setAgendaItems([...agendaItems, '']);
@@ -66,25 +72,20 @@ export default function NewMeetingNotePage() {
     setSaveSuccess(false);
 
     try {
-      const meetingNote = {
-        title: formData.title,
-        date: formData.date,
-        recorder: formData.recorder,
-        attendees: formData.attendees.split(',').map(a => a.trim()).filter(Boolean),
-        agenda: agendaItems.filter(item => item.trim() !== ''),
-        notes: formData.notes,
+      const meetingNoteData = {
+        agendaItems: agendaItems.filter(item => item.trim() !== ''),
         decisions: decisions.filter(decision => decision.trim() !== ''),
-        createdAt: new Date(),
+        notes: formData.notes,
+        attendeeIds: formData.attendees,
       };
 
-      // Add API call here to save meeting note
-      console.log('Saving meeting note:', meetingNote);
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      console.log('Saving meeting note:', meetingNoteData);
+
+      const result = await createMeetingNoteMutation.mutateAsync(meetingNoteData);
+      console.log('Meeting note created successfully:', result);
+
       setSaveSuccess(true);
-      
+
       // Reset form after 2 seconds
       setTimeout(() => {
         resetForm();
@@ -92,6 +93,7 @@ export default function NewMeetingNotePage() {
       }, 2000);
     } catch (error) {
       console.error('Error saving meeting note:', error);
+      setSaveSuccess(false);
     } finally {
       setIsSaving(false);
     }
@@ -102,11 +104,26 @@ export default function NewMeetingNotePage() {
       title: '',
       date: new Date(),
       recorder: '',
-      attendees: '',
+      attendees: [],
       notes: '',
     });
     setAgendaItems(['']);
     setDecisions(['']);
+  };
+
+  const handleAttendeeChange = (userId: string, isChecked: boolean) => {
+    const userIdNum = parseInt(userId);
+    if (isChecked) {
+      setFormData(prev => ({
+        ...prev,
+        attendees: [...prev.attendees, userIdNum]
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        attendees: prev.attendees.filter(id => id !== userIdNum)
+      }));
+    }
   };
 
   return (
@@ -175,16 +192,35 @@ export default function NewMeetingNotePage() {
 
               {/* Attendees */}
               <div className="space-y-2">
-                <Label htmlFor="attendees" className="font-bold">Attendees (comma-separated) *</Label>
-                <Input
-                  id="attendees"
-                  type="text"
-                  required
-                  value={formData.attendees}
-                  onChange={e => setFormData({ ...formData, attendees: e.target.value })}
-                  placeholder="John Doe, Jane Smith, ..."
-                  className="border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold"
-                />
+                <Label className="font-bold">Attendees *</Label>
+                <div className="border-4 border-black rounded-lg p-4 bg-gray-50 max-h-40 overflow-y-auto">
+                  {isLoadingUsers ? (
+                    <p className="text-center text-gray-500">Loading users...</p>
+                  ) : users.length === 0 ? (
+                    <p className="text-center text-gray-500">No users available</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      {users.map((user: User) => (
+                        <label key={user.id} className="flex items-center space-x-2 cursor-pointer hover:bg-gray-100 p-2 rounded">
+                          <input
+                            type="checkbox"
+                            checked={formData.attendees.includes(user.id)}
+                            onChange={(e) => handleAttendeeChange(user.id.toString(), e.target.checked)}
+                            className="w-4 h-4 text-blue-600 border-2 border-gray-300 rounded focus:ring-blue-500"
+                          />
+                          <span className="text-sm font-medium">
+                            {user.firstName} {user.lastName}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {formData.attendees.length > 0 && (
+                  <p className="text-sm text-gray-600">
+                    {formData.attendees.length} attendee{formData.attendees.length !== 1 ? 's' : ''} selected
+                  </p>
+                )}
               </div>
 
               {/* Meeting Agenda */}
@@ -299,13 +335,13 @@ export default function NewMeetingNotePage() {
                 >
                   Clear Form
                 </Button>
-                <Button 
+                <Button
                   type="submit"
-                  disabled={isSaving}
+                  disabled={isSaving || createMeetingNoteMutation.isPending}
                   className="flex-1 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-black uppercase hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
                 >
                   <Save className="w-5 h-5 mr-2" />
-                  {isSaving ? 'Saving...' : 'Save Meeting'}
+                  {isSaving || createMeetingNoteMutation.isPending ? 'Saving...' : 'Save Meeting'}
                 </Button>
               </div>
             </form>

@@ -23,272 +23,40 @@ import {
   Download,
   X,
   CheckCircle2,
-  ClipboardList
+  ClipboardList,
+  Loader2
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
 import { DateSearchFilter } from '@/components/DateSearchFilter';
-
-type MeetingNote = {
-  id: string;
-  title: string;
-  type: string;
-  date: Date;
-  startTime: string;
-  endTime: string;
-  location: string;
-  attendeesCount: number;
-  hasActionItems: boolean;
-  createdAt: Date;
-  recorder?: string;
-  attendees?: string[];
-  agenda?: string[];
-  notes?: string;
-  decisions?: string[];
-};
+import { useMeetingNotes, useMeetingNote } from '@/lib/hooks/useMeetingNotes';
+import { MeetingNote, MeetingNoteAttendee } from '@/lib/services/meeting-notes.service';
 
 export default function AllNotesPage() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filterType, setFilterType] = useState('all');
   const [dateFilter, setDateFilter] = useState<Date | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  const [selectedNote, setSelectedNote] = useState<MeetingNote | null>(null);
+  const [selectedNoteId, setSelectedNoteId] = useState<number | null>(null);
 
-  // Mock data - replace with API call
-  const mockNotes: MeetingNote[] = [
-    {
-      id: '1',
-      title: 'Church Board Meeting',
-      type: 'Board Meeting',
-      date: new Date('2026-01-25'),
-      startTime: '10:00',
-      endTime: '12:00',
-      location: 'Board Room',
-      attendeesCount: 12,
-      hasActionItems: true,
-      createdAt: new Date('2026-01-25'),
-      recorder: 'Elder John Smith',
-      attendees: ['Pastor David Johnson', 'Elder John Smith', 'Sister Mary Williams', 'Brother James Brown', 'Sister Sarah Davis', 'Elder Michael Wilson', 'Brother Timothy Lee', 'Sister Grace Anderson', 'Brother Paul Martinez', 'Sister Ruth Thompson', 'Elder Daniel White', 'Sister Rebecca Harris'],
-      agenda: ['Opening Prayer', 'Financial Report Review', 'Building Maintenance Discussion', 'Youth Ministry Update', 'Upcoming Events Planning', 'Closing Prayer'],
-      notes: `Opening Prayer: Elder John led us in prayer.
-
-Financial Report Review:
-- Reviewed monthly income and expenses
-- All bills paid on time
-- Discussed budget for upcoming quarter
-
-Building Maintenance Discussion:
-- Roof repairs needed - multiple quotes reviewed
-- HVAC system maintenance scheduled
-- Parking lot resurfacing proposal presented
-
-Youth Ministry Update:
-- Summer camp planning underway
-- Youth attendance increasing
-- New youth leader appointed
-
-Upcoming Events Planning:
-- Easter service preparations
-- Community outreach event scheduled
-- Vacation Bible School dates confirmed
-
-Closing Prayer: Sister Mary closed in prayer.`,
-      decisions: [
-        'Approved $5,000 budget for roof repairs',
-        'Scheduled HVAC maintenance for next month',
-        'Approved summer youth camp dates: July 15-22',
-        'Allocated $2,000 for Easter service preparations',
-        'Confirmed VBS dates: June 10-14'
-      ],
-    },
-    {
-      id: '2',
-      title: 'Elders Council Meeting',
-      type: 'Council Meeting',
-      date: new Date('2026-01-20'),
-      startTime: '14:00',
-      endTime: '16:00',
-      location: 'Conference Room A',
-      attendeesCount: 8,
-      hasActionItems: true,
-      createdAt: new Date('2026-01-20'),
-      recorder: 'Elder Michael Wilson',
-      attendees: ['Pastor David Johnson', 'Elder John Smith', 'Elder Michael Wilson', 'Elder Daniel White', 'Sister Mary Williams', 'Sister Sarah Davis', 'Brother James Brown', 'Brother Timothy Lee'],
-      agenda: ['Spiritual Health of Congregation', 'Pastoral Care Needs', 'Sabbath School Review', 'Prayer Requests'],
-      notes: `Opening Prayer: Pastor David opened with prayer.
-
-Spiritual Health of Congregation:
-- Discussed overall spiritual climate
-- Identified areas needing attention
-- Planned spiritual revival series
-
-Pastoral Care Needs:
-- Reviewed members needing visits
-- Discussed hospital visitation schedule
-- Planned home communion services
-
-Sabbath School Review:
-- Attendance trends discussed
-- Teacher training needs identified
-- New curriculum materials reviewed
-
-Prayer Requests:
-- Prayed for sick members
-- Prayed for church growth
-- Prayed for community outreach
-
-Closing Prayer: Elder John closed in prayer.`,
-      decisions: [
-        'Scheduled spiritual revival series for March',
-        'Created pastoral care visitation schedule',
-        'Approved new Sabbath School curriculum',
-        'Planned teacher training for February 15th'
-      ],
-    },
-    {
-      id: '3',
-      title: 'Youth Ministry Planning',
-      type: 'Ministry Meeting',
-      date: new Date('2026-01-18'),
-      startTime: '18:00',
-      endTime: '20:00',
-      location: 'Youth Hall',
-      attendeesCount: 6,
-      hasActionItems: false,
-      createdAt: new Date('2026-01-18'),
-      recorder: 'Brother Timothy Lee',
-      attendees: ['Brother Timothy Lee', 'Sister Grace Anderson', 'Brother Paul Martinez', 'Sister Rebecca Harris', 'Brother David Chen', 'Sister Emily Rodriguez'],
-      agenda: ['Summer Camp Planning', 'Weekly Activities', 'Fundraising Ideas', 'Volunteer Recruitment'],
-      notes: `Opening Prayer: Brother Timothy led in prayer.
-
-Summer Camp Planning:
-- Discussed camp location options
-- Reviewed budget requirements
-- Planned activities and schedule
-
-Weekly Activities:
-- Friday night youth meetings
-- Sabbath afternoon programs
-- Midweek Bible study
-
-Fundraising Ideas:
-- Car wash fundraiser
-- Bake sale
-- Youth talent show
-
-Volunteer Recruitment:
-- Need more adult sponsors
-- Looking for music leaders
-- Seeking activity coordinators
-
-Closing Prayer: Sister Grace closed in prayer.`,
-      decisions: [],
-    },
-    {
-      id: '4',
-      title: 'Finance Committee Review',
-      type: 'Committee Meeting',
-      date: new Date('2026-01-15'),
-      startTime: '09:00',
-      endTime: '11:00',
-      location: 'Finance Office',
-      attendeesCount: 5,
-      hasActionItems: true,
-      createdAt: new Date('2026-01-15'),
-      recorder: 'Sister Sarah Davis',
-      attendees: ['Sister Sarah Davis', 'Brother James Brown', 'Elder John Smith', 'Sister Ruth Thompson', 'Brother Michael Chen'],
-      agenda: ['Q4 Financial Report', 'Budget Planning', 'Expense Review', 'Investment Strategy'],
-      notes: `Opening Prayer: Sister Sarah led in prayer.
-
-Q4 Financial Report:
-- Total income exceeded projections
-- Expenses within budget
-- Year-end surplus achieved
-
-Budget Planning:
-- Reviewed 2026 budget proposals
-- Discussed ministry allocations
-- Planned for major expenses
-
-Expense Review:
-- All bills current
-- Utility costs reviewed
-- Maintenance expenses tracked
-
-Investment Strategy:
-- Reviewed investment portfolio
-- Discussed risk management
-- Planned for future growth
-
-Closing Prayer: Brother James closed in prayer.`,
-      decisions: [
-        'Approved 2026 annual budget',
-        'Allocated surplus to building fund',
-        'Approved new investment strategy',
-        'Scheduled quarterly financial reviews'
-      ],
-    },
-    {
-      id: '5',
-      title: 'Worship Team Meeting',
-      type: 'Ministry Meeting',
-      date: new Date('2026-01-12'),
-      startTime: '19:00',
-      endTime: '21:00',
-      location: 'Sanctuary',
-      attendeesCount: 10,
-      hasActionItems: false,
-      createdAt: new Date('2026-01-12'),
-      recorder: 'Sister Grace Anderson',
-      attendees: ['Sister Grace Anderson', 'Brother Paul Martinez', 'Sister Emily Rodriguez', 'Brother David Chen', 'Sister Lisa Wang', 'Brother Marcus Johnson', 'Sister Angela Brown', 'Brother Kevin Lee', 'Sister Michelle Davis', 'Brother Ryan Thompson'],
-      agenda: ['Music Selection', 'Rehearsal Schedule', 'Special Music Planning', 'Equipment Needs'],
-      notes: `Opening Prayer: Sister Grace led in prayer.
-
-Music Selection:
-- Reviewed songs for upcoming services
-- Discussed seasonal themes
-- Planned special presentations
-
-Rehearsal Schedule:
-- Weekly rehearsals on Thursdays
-- Extra rehearsals before special events
-- Individual practice expectations
-
-Special Music Planning:
-- Easter cantata preparation
-- Guest musicians coordination
-- Youth choir involvement
-
-Equipment Needs:
-- New microphones needed
-- Sound system upgrade discussed
-- Music stand replacements
-
-Closing Prayer: Brother Paul closed in prayer.`,
-      decisions: [],
-    },
-  ];
-
-  const meetingTypes = [
-    'Board Meeting',
-    'Council Meeting',
-    'Committee Meeting',
-    'Ministry Meeting',
-    'Planning Session',
-    'General Meeting',
-  ];
+  // Fetch meeting notes from API
+  const { data: notes = [], isLoading, error } = useMeetingNotes();
+  const { data: selectedNote, isLoading: isLoadingDetail } = useMeetingNote(selectedNoteId || 0);
 
   // Filter notes
-  const filteredNotes = mockNotes.filter(note => {
-    const matchesSearch = note.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         note.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                         note.location.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesType = filterType === 'all' || note.type === filterType;
+  const filteredNotes = notes.filter(note => {
+    const matchesSearch = !searchQuery || 
+      note.notes?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      note.agenda_items?.some(item => item.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      note.decisions?.some(decision => decision.toLowerCase().includes(searchQuery.toLowerCase())) ||
+      note.attendees?.some(attendee => 
+        `${attendee.firstName} ${attendee.lastName}`.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    
     const matchesDate = !dateFilter || 
-      new Date(note.date).toDateString() === dateFilter.toDateString();
-    return matchesSearch && matchesType && matchesDate;
+      (note.createdAt && new Date(note.createdAt).toDateString() === dateFilter.toDateString());
+    
+    return matchesSearch && matchesDate;
   });
 
   // Pagination
@@ -298,22 +66,30 @@ Closing Prayer: Brother Paul closed in prayer.`,
     currentPage * itemsPerPage
   );
 
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case 'Board Meeting':
-        return 'bg-blue-200';
-      case 'Council Meeting':
-        return 'bg-purple-200';
-      case 'Committee Meeting':
-        return 'bg-green-200';
-      case 'Ministry Meeting':
-        return 'bg-yellow-200';
-      case 'Planning Session':
-        return 'bg-pink-200';
-      default:
-        return 'bg-gray-200';
-    }
+  const getTypeColor = (index: number) => {
+    const colors = [
+      'bg-blue-200',
+      'bg-purple-200', 
+      'bg-green-200',
+      'bg-yellow-200',
+      'bg-pink-200',
+      'bg-orange-200'
+    ];
+    return colors[index % colors.length];
   };
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <Card className="bg-red-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <CardContent className="p-8 text-center">
+            <p className="text-lg font-black">Failed to load meeting notes</p>
+            <p className="text-sm text-gray-600 mt-2">Please try again later</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
@@ -340,26 +116,10 @@ Closing Prayer: Brother Paul closed in prayer.`,
               setSearchQuery(query);
               setCurrentPage(1);
             }}
-            searchPlaceholder="Search by title, type, or location..."
+            searchPlaceholder="Search by notes, agenda, decisions, or attendees..."
           />
 
-          {/* Type Filter */}
-          <Select value={filterType} onValueChange={(value) => {
-            setFilterType(value);
-            setCurrentPage(1);
-          }}>
-            <SelectTrigger className="w-[200px] border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
-              <SelectValue placeholder="All types" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              {meetingTypes.map(type => (
-                <SelectItem key={type} value={type}>{type}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {(searchQuery || dateFilter || filterType !== 'all') && (
+          {(searchQuery || dateFilter) && (
             <p className="text-sm font-bold text-gray-600">
               Found {filteredNotes.length} note{filteredNotes.length !== 1 ? 's' : ''}
             </p>
@@ -381,7 +141,12 @@ Closing Prayer: Brother Paul closed in prayer.`,
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {paginatedNotes.length === 0 ? (
+            {isLoading ? (
+              <div className="text-center py-12">
+                <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
+                <p className="text-xl font-black uppercase">Loading Meeting Notes...</p>
+              </div>
+            ) : paginatedNotes.length === 0 ? (
               <div className="text-center py-12">
                 <div className="inline-block p-6 bg-gray-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                   <Search className="w-12 h-12 mx-auto mb-4 text-gray-600" />
@@ -394,10 +159,10 @@ Closing Prayer: Brother Paul closed in prayer.`,
             ) : (
               <>
                 <div className="space-y-4">
-                  {paginatedNotes.map((note) => (
+                  {paginatedNotes.map((note, index) => (
                     <Card
                       key={note.id}
-                      className={`${getTypeColor(note.type)} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer`}
+                      className={`${getTypeColor(index)} border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all cursor-pointer`}
                     >
                       <CardContent className="pt-6">
                         <div className="flex items-start justify-between gap-4">
@@ -405,42 +170,44 @@ Closing Prayer: Brother Paul closed in prayer.`,
                             <div className="flex items-start gap-3 mb-3">
                               <FileText className="w-6 h-6 flex-shrink-0 mt-1" />
                               <div>
-                                <h3 className="text-2xl font-black mb-1">{note.title}</h3>
+                                <h3 className="text-2xl font-black mb-1">
+                                  Meeting Note #{note.id}
+                                </h3>
                                 <p className="text-sm font-bold uppercase px-3 py-1 bg-black text-white inline-block">
-                                  {note.type}
+                                  {note.createdAt ? format(new Date(note.createdAt), 'MMM dd, yyyy') : 'No Date'}
                                 </p>
                               </div>
                             </div>
 
-                            <div className="grid md:grid-cols-3 gap-3 mt-4">
-                              <div className="flex items-center gap-2 font-bold text-sm">
-                                <Calendar className="w-4 h-4" />
-                                <span>
-                                  {format(note.date, 'MMM dd, yyyy')}
-                                </span>
-                              </div>
-
+                            <div className="grid md:grid-cols-2 gap-3 mt-4">
                               <div className="flex items-center gap-2 font-bold text-sm">
                                 <Users className="w-4 h-4" />
-                                <span>{note.attendeesCount} attendees</span>
+                                <span>{note.attendees?.length || 0} attendees</span>
                               </div>
 
                               <div className="flex items-center gap-2 font-bold text-sm">
-                                <span>{note.startTime} - {note.endTime}</span>
+                                <ClipboardList className="w-4 h-4" />
+                                <span>{note.agenda_items?.length || 0} agenda items</span>
                               </div>
                             </div>
 
-                            {note.hasActionItems && (
+                            <div className="mt-3">
+                              <p className="font-bold text-sm line-clamp-2">
+                                {note.notes ? note.notes.substring(0, 150) + '...' : 'No notes available'}
+                              </p>
+                            </div>
+
+                            {(note.decisions && note.decisions.length > 0) && (
                               <div className="mt-3">
                                 <span className="px-3 py-1 bg-red-400 border-2 border-black font-black text-xs uppercase">
-                                  Has Action Items
+                                  {note.decisions.length} Decision{note.decisions.length !== 1 ? 's' : ''}
                                 </span>
                               </div>
                             )}
                           </div>
 
                           <Button
-                            onClick={() => setSelectedNote(note)}
+                            onClick={() => setSelectedNoteId(note.id)}
                             className="font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all"
                           >
                             <Eye className="w-5 h-5 mr-2" />
@@ -470,10 +237,11 @@ Closing Prayer: Brother Paul closed in prayer.`,
         </Card>
 
         {/* View Meeting Modal */}
-        {selectedNote && (
+        {selectedNoteId && selectedNote && (
           <ViewMeetingModal 
             meeting={selectedNote} 
-            onClose={() => setSelectedNote(null)} 
+            onClose={() => setSelectedNoteId(null)} 
+            isLoading={isLoadingDetail}
           />
         )}
       </div>
@@ -481,14 +249,37 @@ Closing Prayer: Brother Paul closed in prayer.`,
   );
 }
 
-function ViewMeetingModal({ meeting, onClose }: { meeting: MeetingNote; onClose: () => void }) {
+function ViewMeetingModal({ 
+  meeting, 
+  onClose, 
+  isLoading 
+}: { 
+  meeting: MeetingNote; 
+  onClose: () => void;
+  isLoading: boolean;
+}) {
+  if (isLoading) {
+    return (
+      <Dialog open={true} onOpenChange={onClose}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <div className="text-center py-12">
+            <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
+            <p className="text-xl font-black uppercase">Loading Meeting Details...</p>
+          </div>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="uppercase text-2xl">{meeting.title}</DialogTitle>
+          <DialogTitle className="uppercase text-2xl">
+            Meeting Note #{meeting.id}
+          </DialogTitle>
           <p className="text-sm font-bold pt-2">
-            {format(meeting.date, 'MMMM dd, yyyy')} • {meeting.startTime} - {meeting.endTime}
+            {meeting.createdAt ? format(new Date(meeting.createdAt), 'MMMM dd, yyyy') : 'No Date'}
             {meeting.recorder && ` • Recorded by ${meeting.recorder}`}
           </p>
         </DialogHeader>
@@ -503,12 +294,12 @@ function ViewMeetingModal({ meeting, onClose }: { meeting: MeetingNote; onClose:
               </h3>
               <div className="bg-blue-50 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <div className="flex flex-wrap gap-2">
-                  {meeting.attendees.map((attendee, index) => (
+                  {meeting.attendees.map((attendee: MeetingNoteAttendee) => (
                     <span 
-                      key={index}
+                      key={attendee.id}
                       className="bg-white border-2 border-black px-3 py-1 font-bold text-sm"
                     >
-                      {attendee}
+                      {attendee.firstName} {attendee.lastName}
                     </span>
                   ))}
                 </div>
@@ -517,7 +308,7 @@ function ViewMeetingModal({ meeting, onClose }: { meeting: MeetingNote; onClose:
           )}
 
           {/* Meeting Agenda */}
-          {meeting.agenda && meeting.agenda.length > 0 && (
+          {meeting.agenda_items && meeting.agenda_items.length > 0 && (
             <div>
               <h3 className="font-black text-lg mb-3 uppercase flex items-center gap-2">
                 <ClipboardList className="w-5 h-5" />
@@ -525,7 +316,7 @@ function ViewMeetingModal({ meeting, onClose }: { meeting: MeetingNote; onClose:
               </h3>
               <div className="bg-purple-50 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
                 <ol className="list-decimal list-inside space-y-2">
-                  {meeting.agenda.map((item, index) => (
+                  {meeting.agenda_items.map((item, index) => (
                     <li key={index} className="font-bold">
                       {item}
                     </li>
@@ -563,6 +354,34 @@ function ViewMeetingModal({ meeting, onClose }: { meeting: MeetingNote; onClose:
                     </li>
                   ))}
                 </ul>
+              </div>
+            </div>
+          )}
+
+          {/* Additional Fields (if they exist in future) */}
+          {meeting.title && (
+            <div>
+              <h3 className="font-black text-lg mb-3 uppercase">Title</h3>
+              <div className="bg-gray-50 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="font-bold">{meeting.title}</p>
+              </div>
+            </div>
+          )}
+
+          {meeting.location && (
+            <div>
+              <h3 className="font-black text-lg mb-3 uppercase">Location</h3>
+              <div className="bg-gray-50 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="font-bold">{meeting.location}</p>
+              </div>
+            </div>
+          )}
+
+          {meeting.startTime && meeting.endTime && (
+            <div>
+              <h3 className="font-black text-lg mb-3 uppercase">Time</h3>
+              <div className="bg-gray-50 border-4 border-black p-4 shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+                <p className="font-bold">{meeting.startTime} - {meeting.endTime}</p>
               </div>
             </div>
           )}

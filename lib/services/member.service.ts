@@ -102,7 +102,7 @@ export const memberService = {
 
     // Create new member
     create: (data: CreateMemberInput) =>
-        apiClient<Member>('/users', {
+        apiClient<Member>('/auth/register', {
             method: 'POST',
             body: JSON.stringify({
                 firstName: data.firstName,

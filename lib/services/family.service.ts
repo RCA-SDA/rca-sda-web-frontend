@@ -164,6 +164,12 @@ export const familyService = {
                 throw new Error('Server error. Please try again later.');
             }
 
+            // Check if it's a JSON parsing error (response was successful but not JSON)
+            if (error?.message === 'Invalid JSON response from server') {
+                console.log('✅ Member added successfully (non-JSON response)');
+                return; // Return success since the actual operation worked
+            }
+
             throw new Error('Failed to add member to family. Please check your connection and try again.');
         });
     },

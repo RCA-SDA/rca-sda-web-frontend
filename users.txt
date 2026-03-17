@@ -6,13 +6,8 @@ ROLES AND THEIR REDIRECT PATHS:
 ===============================
 
 USER → /dashboard
-ADMIN → /adminv
-ELDER_MALE → /users/elder_male
-ELDER_FEMALE → /users/elder_female
-ASSISTANT_ELDER_MALE → /users/assistant_elder_male
-ASSISTANT_ELDER_FEMALE → /users/assistant_elder_female
-EVANGELISM_LEADER_MALE → /users/evangelism_leader_male
-EVANGELISM_LEADER_FEMALE → /users/evangelism_leader_female
+ADMIN → /admin
+
 JA_LEADER_MALE → /users/ja_leader_male
 JA_LEADER_FEMALE → /users/ja_leader_female
 MIFEM_LEADER → /users/mifem_leader

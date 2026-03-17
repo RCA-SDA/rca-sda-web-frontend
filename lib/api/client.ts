@@ -60,9 +60,18 @@ export async function apiClient<T>(
 
     let result = null;
     try {
-        result = await response.json();
+        // Check if response has content before trying to parse JSON
+        const text = await response.text();
+        console.log('📥 Raw response text:', text);
+
+        if (!text || text.trim() === '') {
+            console.log('✅ Empty response received, returning null');
+            return null as T;
+        }
+
+        result = JSON.parse(text);
     } catch (jsonError) {
-        console.warn('⚠️ Could not parse success response as JSON:', jsonError);
+        console.warn('⚠️ Could not parse response as JSON:', jsonError);
         throw new Error('Invalid JSON response from server');
     }
     console.log('✅ Response data:', result);
