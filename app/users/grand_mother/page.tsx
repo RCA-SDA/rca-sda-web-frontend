@@ -2,27 +2,42 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { 
-  Users, 
+import {
+  Users,
   FolderPlus,
   UserPlus,
   Activity,
-  TrendingUp
+  TrendingUp,
+  Loader2
 } from 'lucide-react';
 import Link from 'next/link';
+import { useFamilies, useAllUsers } from '@/lib/hooks/useFamily';
+import { useCurrentUser } from '@/lib/hooks/useCurrentUser';
 
-export default function GrandFatherPortalPage() {
-  const grandFather = {
-    name: 'Elder James Wilson',
-    role: 'Grand Father',
-  };
+export default function GrandMotherPortalPage() {
+  // Fetch real data from APIs
+  const { data: families = [], isLoading: isLoadingFamilies } = useFamilies();
+  const { data: users = [], isLoading: isLoadingUsers } = useAllUsers();
+  const { data: currentUser, isLoading: isLoadingUser } = useCurrentUser();
 
+  // Calculate stats from real data
   const stats = {
-    totalFamilies: 12,
-    totalMembers: 48,
-    activeFamilies: 11,
-    newMembersThisMonth: 3,
+    totalFamilies: families.length,
+    totalMembers: users.length,
+    activeFamilies: families.filter(f => f.members && f.members.length > 0).length,
+    newMembersThisMonth: 0, // Would need date filtering from API
   };
+
+  if (isLoadingFamilies || isLoadingUsers || isLoadingUser) {
+    return (
+      <div className="min-h-screen bg-[#fafafa] flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="w-12 h-12 animate-spin mx-auto mb-4" />
+          <p className="text-lg font-bold">Loading dashboard...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#fafafa] py-8">
@@ -30,10 +45,10 @@ export default function GrandFatherPortalPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-black uppercase transform -rotate-1 mb-2">
-            Grand Father Portal
+            Grand Mother Portal
           </h1>
           <p className="text-xl font-bold">
-            Welcome, {grandFather.name}
+            Welcome, {currentUser ? `${currentUser.firstName} ${currentUser.lastName}` : 'Grand Mother'}
           </p>
         </div>
 
@@ -110,7 +125,7 @@ export default function GrandFatherPortalPage() {
               </Link>
 
               <Link href="/users/grand_father/add-member">
-                <Button 
+                <Button
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-blue-400"
                 >
                   <UserPlus className="w-6 h-6 mr-2" />
@@ -119,7 +134,7 @@ export default function GrandFatherPortalPage() {
               </Link>
 
               <Link href="/users/grand_father/family">
-                <Button 
+                <Button
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-green-400"
                 >
                   <Users className="w-6 h-6 mr-2" />
