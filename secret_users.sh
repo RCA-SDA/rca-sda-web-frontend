@@ -7,17 +7,18 @@ BASE_URL="https://rca-sda-backend.onrender.com"
 API_ENDPOINT="/api/users"
 PASSWORD="password123"
 
-# Get admin token (you'll need to login first)
+# Get admin token first (since /api/auth/register is broken)
 echo "Please login as admin first and get your token:"
-echo "curl -X POST $BASE_URL/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"admin@example.com\",\"password\":\"password123\"}'"
+echo "curl -X POST $BASE_URL/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"admin@gmail.com\",\"password\":\"password123\"}'"
 echo ""
-echo "Enter your admin token:"
+echo "Enter admin token:"
 read -r ADMIN_TOKEN
 
 if [ -z "$ADMIN_TOKEN" ]; then
     echo "Error: Admin token is required"
     exit 1
 fi
+
 
 # Function to create user
 create_user() {
@@ -36,6 +37,8 @@ create_user() {
             \"firstName\": \"$first_name\",
             \"lastName\": \"$last_name\",
             \"email\": \"$email\",
+            \"password\": \"$PASSWORD\",
+            \"confirmPassword\": \"$PASSWORD\",
             \"gender\": \"$gender\",
             \"level\": \"Y1\",
             \"status\": \"GRADUATED\",

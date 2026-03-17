@@ -4,3 +4,4 @@ export * from './blog.service';
 export { memberService, type Member, type CreateMemberInput, type UpdateMemberInput } from './member.service';
 export { choirService, type Choir, type CreateChoirInput, type UpdateChoirInput, type ChoirSong, type CreateChoirSongInput, type UpdateChoirSongInput } from './choir.service';
 export { passwordService, type ForgotPasswordInput, type ResetPasswordInput } from './password.service';
+export { familyService, type Family, type CreateFamilyInput, type UpdateFamilyInput, type User } from './family.service';

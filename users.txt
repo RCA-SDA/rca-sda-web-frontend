@@ -6,7 +6,7 @@ ROLES AND THEIR REDIRECT PATHS:
 ===============================
 
 USER → /dashboard
-ADMIN → /admin
+ADMIN → /adminv
 ELDER_MALE → /users/elder_male
 ELDER_FEMALE → /users/elder_female
 ASSISTANT_ELDER_MALE → /users/assistant_elder_male
@@ -47,3 +47,34 @@ HOW IT WORKS:
 5. Unauthorized access redirects users back to their own page
 
 Total roles supported: 28
+
+
+-- Insert all users with proper created_at, created_by, and valid level values
+INSERT INTO users (email, first_name, last_name, gender, level, password, role, status, choir, family, gallery_items, members_added, created_at, created_by) VALUES
+('user@gmail.com', 'Regular', 'User', 'MALE', 'Y1', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'USER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('admin@gmail.com', 'System', 'Admin', 'MALE', 'Y1', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'USER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('eldermale@gmail.com', 'Elder', 'Male', 'MALE', 'Y1', '$2a$10$0Znz5uyLHm7A127iylocRObpn04xtAeJSWKdow0huHvfGEvHZNASu', 'ELDER_MALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('elderfemale@gmail.com', 'Elder', 'Female', 'FEMALE', 'Y1', '$2a$10$eSUb4spM2pgNhWW4psn/yeYMZBYMAO.7AQGZYeqB8PiNgqf1kEW0a', 'ELDER_FEMALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('assistanteldermale@gmail.com', 'Assistant', 'ElderMale', 'MALE', 'Y1', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'ASSISTANT_ELDER_MALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('assistantelderfemale@gmail.com', 'Assistant', 'ElderFemale', 'FEMALE', 'Y1', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'ASSISTANT_ELDER_FEMALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('evangelismleadermale@gmail.com', 'Evangelism', 'LeaderMale', 'MALE', 'Y2', '$2a$10$MVze1IXXA3Vvf6XsVYKrqust.SOfokLgmfoZOUg.TY0gKtYZoO2fi', 'EVANGELISM_LEADER_MALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('evangelismleaderfemale@gmail.com', 'Evangelism', 'LeaderFemale', 'FEMALE', 'Y2', '$2a$10$MVze1IXXA3Vvf6XsVYKrqust.SOfokLgmfoZOUg.TY0gKtYZoO2fi', 'EVANGELISM_LEADER_FEMALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('jaleadermale@gmail.com', 'JA', 'LeaderMale', 'MALE', 'Y2', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'JA_LEADER_MALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('jaleaderfemale@gmail.com', 'JA', 'LeaderFemale', 'FEMALE', 'Y2', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'JA_LEADER_FEMALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('mifemleader@gmail.com', 'MIFEM', 'Leader', 'FEMALE', 'Y2', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'MIFEM_LEADER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('assistantmifemleader@gmail.com', 'Assistant', 'MIFEMLeader', 'MALE', 'Y2', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'ASSISTANT_MIFEM_LEADER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('communityoutreachleader@gmail.com', 'Community', 'OutreachLeader', 'MALE', 'Y2', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'COMMUNITY_OUTREACH_LEADER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('choirleader@gmail.com', 'Choir', 'Leader', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'CHOIR_LEADER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('choirpatron@gmail.com', 'Choir', 'Patron', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'CHOIR_PATRON', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('choirdisciplinaryleader@gmail.com', 'Choir', 'DisciplinaryLeader', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'CHOIR_DISCIPLINARY_LEADER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('choirmatron@gmail.com', 'Choir', 'Matron', 'FEMALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt3t3CLJSzts515h4Qd6/i', 'CHOIR_MATRON', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('choirsecretary@gmail.com', 'Choir', 'Secretary', 'FEMALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'CHOIR_SECRETARY', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('churchsecretary@gmail.com', 'Church', 'Secretary', 'FEMALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'CHURCH_SECRETARY', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+
+('grandfather@gmail.com', 'Grand', 'Father', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'GRAND_FATHER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('grandmother@gmail.com', 'Grand', 'Mother', 'FEMALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'GRAND_MOTHER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('father@gmail.com', 'Church', 'Father', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'FATHER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('mother@gmail.com', 'Church', 'Mother', 'FEMALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'MOTHER', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('deacon@gmail.com', 'Church', 'Deacon', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'DEACON', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('deaconleadermale@gmail.com', 'Deacon', 'LeaderMale', 'MALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'DEACON_LEADER_MALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com'),
+('deaconleaderfemale@gmail.com', 'Deacon', 'LeaderFemale', 'FEMALE', 'Y3', '$2a$10$VM6LqYyTrP3yS2LmoWFcma.AI3k5up5fUt6t3CLJSzts515h4Qd6/i', 'DEACON_LEADER_FEMALE', 'GRADUATED', NULL, NULL, 0, 0, CURRENT_TIMESTAMP, 'admin@gmail.com');

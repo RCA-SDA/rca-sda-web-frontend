@@ -11,10 +11,10 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
-export default function GrandMotherPortalPage() {
-  const grandMother = {
-    name: 'Elder Mary Johnson',
-    role: 'Grand Mother',
+export default function GrandFatherPortalPage() {
+  const grandFather = {
+    name: 'Elder James Wilson',
+    role: 'Grand Father',
   };
 
   const stats = {
@@ -30,16 +30,16 @@ export default function GrandMotherPortalPage() {
         {/* Header */}
         <div className="mb-8">
           <h1 className="text-4xl font-black uppercase transform -rotate-1 mb-2">
-            Grand Mother Portal
+            Grand Father Portal
           </h1>
           <p className="text-xl font-bold">
-            Welcome, {grandMother.name}
+            Welcome, {grandFather.name}
           </p>
         </div>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-pink-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
+          <Card className="bg-purple-200 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-4px] hover:translate-y-[-4px] hover:shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] transition-all">
             <CardHeader>
               <CardTitle className="uppercase text-sm flex items-center justify-between">
                 <span>Total Families</span>
@@ -102,14 +102,14 @@ export default function GrandMotherPortalPage() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Link href="/users/grand_mother/create-family">
-                <Button className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-pink-400">
+              <Link href="/users/grand_father/create-family">
+                <Button className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-purple-400">
                   <FolderPlus className="w-6 h-6 mr-2" />
                   Create Family
                 </Button>
               </Link>
 
-              <Link href="/users/grand_mother/add-member">
+              <Link href="/users/grand_father/add-member">
                 <Button 
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-blue-400"
                 >
@@ -118,7 +118,7 @@ export default function GrandMotherPortalPage() {
                 </Button>
               </Link>
 
-              <Link href="/users/grand_mother/family">
+              <Link href="/users/grand_father/family">
                 <Button 
                   className="w-full h-20 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-green-400"
                 >

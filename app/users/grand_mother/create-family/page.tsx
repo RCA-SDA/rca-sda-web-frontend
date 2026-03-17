@@ -1,25 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
+import {
   FolderPlus,
   User,
   CheckCircle,
   AlertCircle
 } from 'lucide-react';
-
-interface Member {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  gender: string;
-}
+import { useMaleUsers, useFemaleUsers, useCreateFamily } from '@/lib/hooks/useFamily';
+import { User as UserType } from '@/lib/services/family.service';
 
 export default function CreateFamilyPage() {
   const [formData, setFormData] = useState({
@@ -28,41 +22,16 @@ export default function CreateFamilyPage() {
     motherId: '',
   });
 
-  const [members, setMembers] = useState<Member[]>([]);
-  const [isLoadingMembers, setIsLoadingMembers] = useState(true);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  // Fetch male users for father selection
+  const { data: maleUsers = [], isLoading: isLoadingMales, error: malesError } = useMaleUsers();
+
+  // Fetch female users for mother selection
+  const { data: femaleUsers = [], isLoading: isLoadingFemales, error: femalesError } = useFemaleUsers();
+
+  // Create family mutation
+  const createFamilyMutation = useCreateFamily();
+
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-
-  // Fetch members list
-  useEffect(() => {
-    const fetchMembers = async () => {
-      try {
-        setIsLoadingMembers(true);
-        // Simulate API call - replace with actual API endpoint
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Mock data - replace with actual API response
-        const mockMembers: Member[] = [
-          { id: '1', name: 'John Doe', email: 'john@example.com', phone: '+250 788 111 111', gender: 'male' },
-          { id: '2', name: 'Michael Smith', email: 'michael@example.com', phone: '+250 788 222 222', gender: 'male' },
-          { id: '3', name: 'David Johnson', email: 'david@example.com', phone: '+250 788 333 333', gender: 'male' },
-          { id: '4', name: 'Robert Brown', email: 'robert@example.com', phone: '+250 788 444 444', gender: 'male' },
-          { id: '5', name: 'Jane Doe', email: 'jane@example.com', phone: '+250 788 555 555', gender: 'female' },
-          { id: '6', name: 'Sarah Smith', email: 'sarah@example.com', phone: '+250 788 666 666', gender: 'female' },
-          { id: '7', name: 'Emily Johnson', email: 'emily@example.com', phone: '+250 788 777 777', gender: 'female' },
-          { id: '8', name: 'Mary Brown', email: 'mary@example.com', phone: '+250 788 888 888', gender: 'female' },
-        ];
-        
-        setMembers(mockMembers);
-      } catch (error) {
-        console.error('Error fetching members:', error);
-      } finally {
-        setIsLoadingMembers(false);
-      }
-    };
-
-    fetchMembers();
-  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -81,17 +50,18 @@ export default function CreateFamilyPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      console.log('Creating family:', formData);
-      
+      const result = await createFamilyMutation.mutateAsync({
+        name: formData.familyName,
+        fatherId: formData.fatherId,
+        motherId: formData.motherId,
+      });
+
+      console.log('Family created successfully:', result);
       setSubmitStatus('success');
-      
+
       // Reset form after success
       setTimeout(() => {
         setFormData({
@@ -101,12 +71,10 @@ export default function CreateFamilyPage() {
         });
         setSubmitStatus('idle');
       }, 3000);
-      
+
     } catch (error) {
       console.error('Error creating family:', error);
       setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -119,7 +87,7 @@ export default function CreateFamilyPage() {
             Create New Family
           </h1>
           <p className="text-lg font-bold text-gray-600">
-            Register a new family and assign parents
+            Register a new family and assign a father
           </p>
         </div>
 
@@ -147,8 +115,8 @@ export default function CreateFamilyPage() {
         )}
 
         {/* Form */}
-        <Card className="bg-pink-100 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
-          <CardHeader className="bg-pink-400 border-b-4 border-black">
+        <Card className="bg-purple-100 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)]">
+          <CardHeader className="bg-purple-400 border-b-4 border-black">
             <CardTitle className="uppercase flex items-center gap-2">
               <FolderPlus className="w-6 h-6" />
               Family Information
@@ -188,19 +156,22 @@ export default function CreateFamilyPage() {
                     value={formData.fatherId}
                     onValueChange={(value) => handleSelectChange('fatherId', value)}
                     required
+                    disabled={isLoadingMales || !!malesError}
                   >
                     <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
-                      <SelectValue placeholder={isLoadingMembers ? "Loading members..." : "Select a father"} />
+                      <SelectValue placeholder={isLoadingMales ? "Loading male members..." : malesError ? "Error loading members" : "Select a father"} />
                     </SelectTrigger>
                     <SelectContent className="border-4 border-black">
-                      {isLoadingMembers ? (
-                        <SelectItem value="loading" disabled>Loading members...</SelectItem>
-                      ) : members.length === 0 ? (
-                        <SelectItem value="no-members" disabled>No members available</SelectItem>
+                      {isLoadingMales ? (
+                        <SelectItem value="loading" disabled>Loading male members...</SelectItem>
+                      ) : malesError ? (
+                        <SelectItem value="error" disabled>Error loading members</SelectItem>
+                      ) : maleUsers.length === 0 ? (
+                        <SelectItem value="no-members" disabled>No male members available</SelectItem>
                       ) : (
-                        members.map((member) => (
-                          <SelectItem key={member.id} value={member.id} className="font-bold">
-                            {member.name} - {member.email}
+                        maleUsers.map((user: UserType) => (
+                          <SelectItem key={user.id.toString()} value={user.id.toString()} className="font-bold">
+                            {user.firstName} {user.lastName} - {user.email}
                           </SelectItem>
                         ))
                       )}
@@ -208,7 +179,7 @@ export default function CreateFamilyPage() {
                   </Select>
                   {formData.fatherId && (
                     <p className="text-sm font-bold text-gray-600 mt-2">
-                      Selected: {members.find(m => m.id === formData.fatherId)?.name}
+                      Selected: {maleUsers.find((u: UserType) => u.id.toString() === formData.fatherId)?.firstName} {maleUsers.find((u: UserType) => u.id.toString() === formData.fatherId)?.lastName}
                     </p>
                   )}
                 </div>
@@ -229,19 +200,22 @@ export default function CreateFamilyPage() {
                     value={formData.motherId}
                     onValueChange={(value) => handleSelectChange('motherId', value)}
                     required
+                    disabled={isLoadingFemales || !!femalesError}
                   >
                     <SelectTrigger className="h-12 border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] font-bold">
-                      <SelectValue placeholder={isLoadingMembers ? "Loading members..." : "Select a mother"} />
+                      <SelectValue placeholder={isLoadingFemales ? "Loading female members..." : femalesError ? "Error loading members" : "Select a mother"} />
                     </SelectTrigger>
                     <SelectContent className="border-4 border-black">
-                      {isLoadingMembers ? (
-                        <SelectItem value="loading" disabled>Loading members...</SelectItem>
-                      ) : members.length === 0 ? (
-                        <SelectItem value="no-members" disabled>No members available</SelectItem>
+                      {isLoadingFemales ? (
+                        <SelectItem value="loading" disabled>Loading female members...</SelectItem>
+                      ) : femalesError ? (
+                        <SelectItem value="error" disabled>Error loading members</SelectItem>
+                      ) : femaleUsers.length === 0 ? (
+                        <SelectItem value="no-members" disabled>No female members available</SelectItem>
                       ) : (
-                        members.map((member) => (
-                          <SelectItem key={member.id} value={member.id} className="font-bold">
-                            {member.name} - {member.email}
+                        femaleUsers.map((user: UserType) => (
+                          <SelectItem key={user.id.toString()} value={user.id.toString()} className="font-bold">
+                            {user.firstName} {user.lastName} - {user.email}
                           </SelectItem>
                         ))
                       )}
@@ -249,7 +223,7 @@ export default function CreateFamilyPage() {
                   </Select>
                   {formData.motherId && (
                     <p className="text-sm font-bold text-gray-600 mt-2">
-                      Selected: {members.find(m => m.id === formData.motherId)?.name}
+                      Selected: {femaleUsers.find((u: UserType) => u.id.toString() === formData.motherId)?.firstName} {femaleUsers.find((u: UserType) => u.id.toString() === formData.motherId)?.lastName}
                     </p>
                   )}
                 </div>
@@ -259,10 +233,10 @@ export default function CreateFamilyPage() {
               <div className="pt-6">
                 <Button
                   type="submit"
-                  disabled={isSubmitting}
-                  className="w-full h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-pink-400 disabled:opacity-50"
+                  disabled={createFamilyMutation.isPending}
+                  className="w-full h-14 text-lg font-black uppercase border-4 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all bg-purple-400 disabled:opacity-50"
                 >
-                  {isSubmitting ? (
+                  {createFamilyMutation.isPending ? (
                     'Creating Family...'
                   ) : (
                     <>
@@ -282,15 +256,15 @@ export default function CreateFamilyPage() {
             <h3 className="font-black uppercase mb-3">Important Notes:</h3>
             <ul className="space-y-2 font-bold text-sm">
               <li className="flex items-start gap-2">
-                <span className="text-pink-600">•</span>
+                <span className="text-purple-600">•</span>
                 <span>The father will be automatically assigned as the family head</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-pink-600">•</span>
+                <span className="text-purple-600">•</span>
                 <span>Both parents will receive login credentials via email</span>
               </li>
               <li className="flex items-start gap-2">
-                <span className="text-pink-600">•</span>
+                <span className="text-purple-600">•</span>
                 <span>You can add more family members after creating the family</span>
               </li>
             </ul>
